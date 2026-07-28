@@ -1,0 +1,4 @@
+1) profile
+uv run --with simpleai python -m cProfile -o stats.dump eight_puzzle.py
+2) visualize
+uvx snakeviz stats.dump
