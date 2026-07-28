@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+
+		<title>TAP | Intro</title>
+
+		<link rel="stylesheet" href="reveal_js/reset.css" />
+		<link rel="stylesheet" href="reveal_js/reveal.css" />
+        <link rel="stylesheet" href="reveal_js/theme/night.css" />
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="reveal_js/plugin/highlight/monokai.css" />
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides" style="text-align: left">
+				<section>
+                    <h2>Tópicos Avanzados de Programación</h2>
+                    <p>Performance</p>
+                </section>
+
+				<section>
+                    <h2>Qué es "performance"?</h2>
+                    <p class="fragment">Consumo de recursos (incluyendo tiempo) vs trabajo realizado por nuestros programas.</p>
+                </section>
+
+				<section>
+                    <ul>
+                        <li>Nos vamos a enfocar en <strong>tiempos 🕐</strong></li>
+                        <li class="fragment">De respuesta, de ejecución, etc.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h2>A quién le afecta?</h2>
+                    <ul>
+                        <li class="fragment">Usuarios. Ej: "esta app es re lenta" 🤬.</li>
+                        <li class="fragment">Nosotros (devs):
+                            <ul>
+                                <li class="fragment">Si es mala para los usuarios, se nos van.</li>
+                                <li class="fragment">Quizás es buena para los usuarios, pero mala en costos de infra!</li>
+                        </li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h2>Nuestra app es lenta. Qué hacemos?</h2>
+                    <p>Charlemos sobre algunas respuestas comunes.</p>
+                </section>
+
+				<section>
+                    <h3>Pasemos a otro lenguaje/framework más rápido!</h3>
+                    <p class="fragment">Cuál? Assembler? Costo de correr vs costo de desarrollo.</p>
+                    <p class="fragment">...y estamos seguros de que realmente va a ser más rápido? Por qué?</p>
+                </section>
+                <section>
+                    <h3>Ponemos más máquinas!</h3>
+                    <p class="fragment">Puede ser, pero de vuelta: costos, quizás hay algo mejor que fuerza bruta?</p>
+                </section>
+                <section>
+                    <h3>Paralelizar en la misma máquina?</h3>
+                    <p class="fragment">Punto clave en esto: paralelizar acelera? Cuándo sí y cuándo no?</p>
+                    <p class="fragment">Vamos a charlar mucho más de esto la clase que viene.</p>
+                </section>
+
+				<section>
+                    <h3>No hay soluciones simples</h3>
+                    <p>Tenemos que entender algunas cosas antes.</p>
+                </section>
+
+				<section>
+                    <h2>CPU vs IO</h2>
+                    <p>Tema <strong>clave</strong> a la hora de entender cómo resolver un problema de performance.</p>
+                    <p class="fragment">El código de la app (incluyendo sus deps) no es todo lo que define el tiempo que nos toma ejecutar cosas. Por ejemplo...</p>
+                </section>
+                <section>
+                    <p>Cuánto demora la db en responder con la data? o en guardarla?</p>
+                </section>
+                <section>
+                    <p>Cuánto demora la red en hacer la request al otro microservicio o servicio externo?</p>
+                </section>
+                <section>
+                    <p>Cuánto demora el disco en leer el template?</p>
+                </section>
+
+				<section>
+                    <h3>Repasemos cómo suceden esas cosas a bajo nivel</h3>
+                    <p>Ejemplo: hagamos una consulta a una base de datos que no corre en la misma pc.</p>
+                </section>
+                <section>
+                    <ol>
+                        <li>CPU ejecuta código que construye la consulta SQL<br>
+                        <li class="fragment">CPU ejecuta código que envía por red la consulta al servidor de base de datos.<br>
+                        <li class="fragment">Espera.</li>
+                        <li class="fragment">Llegan datos por la red.</li>
+                        <li class="fragment">CPU retoma ejecución de código y procesa los datos que obtuvimos.</li>
+                    </ol>
+                </section>
+				<section>
+                    <p>Tuvimos tiempo de ejecución de código (CPU), pero también tiempo de esperas de IO.</p>
+                    <p class="fragment">Cuál de los tiempos fue mayor en este ejemplo?</p>
+                </section>
+				<section>
+                    <img src="img/cpu_vs_io.png" style="width: 80%" />
+                    <p>Espera de IO, por mucho! Ej: normalmente es un 90% del tiempo de una request web típica.</p>
+                </section>
+
+				<section>
+                    <h3>Cuánto de CPU y cuánto de IO?</h3>
+                    <ul>
+                        <li class="fragment">En una app web común?</li>
+                        <li class="fragment">En una app móvil de una red social?</li>
+                        <li class="fragment">En un juego?</li>
+                        <li class="fragment">En una red neuronal?</li>
+                    </ul>
+                </section>
+				<section>
+                    <img src="img/cpu_vs_io.png" style="width: 80%" />
+                    <p>En gran parte de las apps "normales", <strong>IO domina por lejos.</strong></p>
+                    <p class="fragment">...y eso cambia por completo la efectividad de las soluciones que charlamos!</p>
+                    <p class="fragment">Probemos con un ejemplo: app web "normal".</p>
+                </section>
+
+				<section>
+                    <h3>Cuánto ganamos si pasamos a un lenguaje/framework 10x más rápido?</h3>
+                    <p class="fragment">Muy poquito! Nuestros tiempos siguen dominados por esperas de IO.</p>
+                    <p class="fragment">...y migrar era costoso. Mucho costo, para muy poca ganancia.</p>
+                </section>
+				<section>
+                    <h3>Cuánto ganamos si ponemos muchas pcs?</h3>
+                    <p class="fragment">Podemos resolver problemas como "el server no alcanza para el tráfico que tenemos".</p>
+                    <p class="fragment">...pero no problemas como "el usuario tiene que esperar demasiado por cada click" o "gastamos mucho en infra porque cada request toma mucho tiempo".</p>
+                </section>
+				<section>
+                    <h3>Ganamos algo si paralelizamos en la misma máquina?</h3> 
+                    <p class="fragment">Este es complejo... lo dejamos para unidad 2.<br>
+                        Spoiler: hay formas en las que sí, y formas que no.</p>
+                </section>
+				<section>
+                    <p>Hay más cosas que podemos hacer para mejorar performance de manera efectiva cuando IO domina?</p>
+                    <p class="fragment">Sí! Reducir esas esperas, o hacer otras cosas mientras esperamos (unidad 2!).</p>
+                </section>
+				<section>
+                    <h3>Por ejemplo, para reducir las esperas en nuestro caso:</h3>
+                    <ul>
+                        <li class="fragment">Cachear resultados de la db para no ejecutar N veces la misma consulta.</li>
+                        <li class="fragment">Configurar mejor nuestra db o cómo guardamos los datos (índices, sharding, etc).</li>
+                        <li class="fragment">Escribir consultas más óptimas, y reducir la lectura de datos innecesarios</li>
+                        <li class="fragment">y más...</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <img src="img/cpu_vs_io.png" style="width: 80%" />
+                    <p>En general, achicar tiempos de IO o hacer otras cosas mientras, incrementa muchiiiiiisimo más la performance que un lenguaje o framework más rápido.</p>
+                </section>
+				<section>
+                    <img src="img/cpu_heavy.png" style="width: 80%" />
+                    <p><strong>Salvo cuando IO no domina!:</strong><br>
+                        juegos, cómputo heavy, cómputo más simple pero en hardware limitado como un Arduino, etc.</p>
+                </section>
+
+				<section>
+                    <p>Hablando de juegos... por qué una GPU acelera? Por qué sirve para performance?</p>
+                </section>
+				<section>
+                    <img src="img/gpu.png" style="width: 40%" />
+                    <h2>GPUs y performance</h2>
+                    <p>Qué es una GPU? Qué tiene de especial? En qué difiere de un procesador normal?</p>
+                </section>
+				<section>
+                    <h3>GPU vs CPU</h3>
+                    <ul>
+                        <li class="fragment">CPU: pocos núcleos muy potentes, poco paralelismo pero operaciones complicadas.</li>
+                        <li class="fragment">GPU: muchos núcleos menos potentes, mucho paralelismo pero operaciones sencillas.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <img src="img/cpu_vs_gpu.png" style="width: 80%" />
+                    <p class="fragment">...ok... pero para qué?</p>
+                </section>
+
+				<section>
+                    <img src="img/vector_calc.png" style="width: 40%" />
+                    <h3>Cálculo vectorizado</h3>
+                    <p>Hay problemas donde naturalmente lo que hacemos es una cantidad muy grande de operaciones sencillas, idénticas e independientes (paralelizables!)</p>
+                </section>
+				<section>
+                    <p>Ojo: no cualquier cosa en paralelo. Operaciones simples, idénticas (solo varían los inputs) e independientes!</p>
+                    <p class="fragment">✅ Sumar estos dos vectores gigantes de números.</p>
+                    <p class="fragment">❌ Hacer muchas requests a una api.</p>
+                    <p class="fragment">❌ Un loop que va acumulando un total.</p>
+                </section>
+				<section>
+                    <p>Aplicaciones comunes:</p>
+                    <ul>
+                        <li class="fragment">Gráficos! Operaciones en masa sobre imágenes (por sectores de la imagen en paralelo).</li>
+                        <li class="fragment">Física! cálculos idénticos en masa para distintos objetos o partes de una escena.</li>
+                        <li class="fragment">Redes neuronales / IA! por dentro funcionan haciendo operaciones entre matrices gigantes, re paralelizables.</li>
+                        <li class="fragment">Y más...</li>
+                    </ul>
+                </section>
+				<section>
+                    <p>Por eso una GPU acelera: nos permite correr miles de operaciones <strong>en paralelo</strong>, que en CPU no podríamos haber paralelizado tanto.</p>
+                    <p class="fragment">Y por eso <strong>no</strong> acelera cualquier problema: solo problemas con miles de operaciones paralelizables.<p>
+                    <p class="fragment">Ej: responder una request web NO es un problema de ese tipo.</p>
+                </section>
+
+				<section>
+                    <h3>GPU: algunas aclaraciones</h3>
+                    <ul style="font-size: 0.7em">
+                        <li class="fragment">Tiempo de GPU entonces técnicamente no es IO, es código corriendo. Peeeero...</li>
+                        <li class="fragment">CPU pide cosas y GPU responde, CPU tiene que esperar a la GPU. Así igualmente hay un tipo de espera desde el punto de vista de CPU.</li>
+                        <li class="fragment">A veces uno puede ser cuello de botella del otro. Ej: juego usando CPU y GPU, uno puede estar esperando al otro.</li>
+                        <li class="fragment">Lo que más afecta al tiempo de GPU es qué tanto podemos paralelizar el cálculo y qué tan potente es la GPU.</li>
+                        <li class="fragment">Los lenguajes, libs, etc que se usan en GPU son muy diferentes.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h2>Volvamos al código en CPU</h2>
+                    <p>Qué pasa cuando su tiempo de ejecución es lo que nos está afectando?</p>
+                </section>
+				<section>
+                    <ul>
+                        <li>Mi app está demorando en calcular X cosa.</li>
+                        <li class="fragment">La lógica de mi juego es re pesada.</li>
+                        <li class="fragment">Mi hardware es re limitado (ej: código complejo en arduino).</li>
+                        <li class="fragment">No lo puedo paralelizar como para que una GPU rinda, o no hay GPU donde corre.</li>
+                        <li class="fragment">Ya mejoré todo lo que pude por el lado de IO! No me queda otra que achicar el tiempo de CPU.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h3>Para esos casos, nos interesa aprender sobre:</h3>
+                    <ul>
+                        <li class="fragment">Profiling.</li>
+                        <li class="fragment">Complejidad computacional.</li>
+                        <li class="fragment">Lenguajes de programación y su performance.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <img src="img/inspect.png" style="width: 20%" />
+                    <h2>Profiling</h2>
+                    <p class="fragment">El acto de medir el consumo de recursos (memoria, tiempo) de un programa durante su ejecución.</p>
+                </section>
+
+				<section>
+                    <p>Nunca optimizar el código antes de estar seguros de dónde es lento!</p>
+                    <p>Con profiling buscamos <strong>dónde</strong> se va el tiempo.</p>
+                </section>
+
+				<section>
+                    <p>Todos los lenguajes tienen herramientas de profiling, algunas más fáciles de usar que otras.</p>
+                    <p>Pero en general, los pasos son los mismos:</p>
+					<pre class="fragment"><code class="hljs bash" data-trim data-line-numbers>
+                        # 1. correr nuestro código con un profiler
+                        # (desde "afuera", o modificando nuestro código)
+                        python3 -m cProfile -o stats.dump my_program.py
+
+                        # 2. analizar la info generada por el profiler
+                        # (tablas, gráficos, lo que nos genere)
+                        uvx snakeviz stats.dump
+					</code></pre>
+                </section>
+
+                <section>
+                    <a href="img/example_profiler_report.png">
+                        <img src="img/example_profiler_report.png" style="width: 80%" />
+                    </a>
+                </section>
+
+				<section>
+                    <h3>Cosas típocas que podemos encontrar:</h3>
+                    <ul>
+                        <li class="fragment">Funciones que toman un gran % del tiempo total.</li>
+                        <li class="fragment">Funciones que se llaman demasiadas veces.</li>
+                        <li class="fragment">Funciones que en promedio demoran demasiado para lo que hacen.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <p>Recuerden: <strong>medir antes de optimizar!</strong></p>
+                </section>
+
+				<section>
+                    <h2>Complejidad computacional</h2>
+                    <p class="fragment">Un "lenguaje" para comparar qué tan buena es la performance de algoritmos.</p>
+                    <p class="fragment">Sin medir casos puntuales, sino entendiendo cómo <strong>escalan</strong>.</p>
+                </section>
+
+				<section>
+                    <img src="img/timeline.png" style="width: 80%" />
+                    <p>"cuándo le salió esa mancha en la nariz al perro??"</p>
+                </section>
+
+				<section>
+                    <ul>
+                        <li>Mirar de a una foto: tiempo crece linealmente.</li>
+                        <li class="fragment">Comparar todas contra todas: tiempo crece cuadráticamente.</li>
+                        <li class="fragment">Búsqueda binaria: tiempo crece menos que linealmente (logaritmo de n).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="img/algo_complexity.png" style="width: 80%" />
+                </section>
+
+				<section>
+                    <p>La complejidad computacional del algoritmo nos dice <strong>cuánto crece en tiempo si crece el tamaño de la entrada.</strong></p>
+                </section>
+
+				<section>
+                    <ul>
+                        <li>Podemos comparar algoritmos sin depender del lenguaje, CPU, etc.</li>
+                        <li class="fragment">Y predecir la performance de nuestro algoritmo cuando crezca la data.</li>
+                        <li class="fragment">Y mejorar muchísimo la performance solo cambiando la lógica.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h3>Notación "Big O"</h3>
+                    <p class="fragment">No nos vamos a meter mucho en el detalle (es más estricto que esto), pero a grandes rasgos:</p>
+                    <ul style="font-size: 0.7em">
+                        <li class="fragment">Función "O", de "n" (cantidad de entradas) que nos dice cantidad de operaciones a correr.</li>
+                        <li class="fragment">En el peor caso.</li>
+                        <li class="fragment">Solo nos interesa el término dominante ("el peor").</li>
+                        <li class="fragment">Y no nos interesan constantes que sumen o multipliquen a toda la función.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Ej1: un O(n + 15) es simplemente O(n)</p>
+                    <p>Ej2: un O(10 * n^3) es simplemente O(n^3)</p>
+                    <p>Ej3: un O(n^3 + n^2 + 10*n) es simplemente O(n^3)</p>
+                </section>
+
+				<section>
+                    <h2>Lenguajes y performance</h2>
+                    <p>Qué lenguaje uso? Qué hace que un lenguaje sea rápido o lento?</p>
+                </section>
+
+				<section>
+                    <p>Qué lenguajes conocen como rápidos y como lentos?</p>
+                    <p class="fragment">Y <strong>por qué</strong> son rápidos o lentos?</p>
+                </section>
+
+				<section>
+                    <img src="img/mythbusters.png" style="width: 80%" />
+                </section>
+
+				<section>
+                    <h3>Mito 1:<br>
+                        Lenguajes compilados vs interpretados</h3>
+                </section>
+				<section>
+                    <p class="fragment">"En Java/C# el código fuente se compila a binario. Luego ejecutamos el binario."</p>
+                    <p class="fragment">"En Python el código fuente es interpretado instrucción por instrucción a medida que se ejecuta."</p>
+                    <p class="fragment">"Python es lento porque es interpretado."</p>
+                </section>
+
+				<section>
+                    <h3>❌</h3>
+                    <p>Ni una de las oraciones de la slide anterior es cierta.</p>
+                </section>
+				<section>
+                    <p>❌ "En Java/C# el código fuente se compila a binario. Luego ejecutamos el binario."</p>
+                    <p class="fragment">✅ Java/C# compilan a un lenguaje intermedio. Runtime interpreta el lenguaje intermedio.</p>
+                    <p class="fragment">(hay otros lenguajes donde sí se compila a binario. Ej: Rust, Go, C)</p>
+                </section>
+				<section>
+                    <p>❌ "En Python el código fuente es interpretado instrucción por instrucción a medida que se ejecuta."</p>
+                    <p class="fragment">✅ Python compila a un lenguaje intermedio. Runtime interpreta el lenguaje intermedio.</p>
+                    <p class="fragment">(hay otros lenguajes donde sí se interpreta el fuente. Ej: PHP)</p>
+                </section>
+				<section>
+                    <p>Los lenguajes realmente compilados (C, Rust, Go) son más rápidos que los realmente interpretados por obvias razones, pero...</p>
+                </section>
+				<section>
+                    <p>✅ Java/C# compilan a un lenguaje intermedio. Runtime interpreta el lenguaje intermedio.</p>
+                    <p>✅ Python compila a un lenguaje intermedio. Runtime interpreta el lenguaje intermedio.</p>
+                    <p class="fragment">🤔 No es lo mismo? Y entonces por qué Python es más lento que Java o C#??</p>
+                </section>
+				<section>
+                    <p> Hay una diferencia: <strong>cuándo</strong> compilamos.</p>
+                    <ul>
+                        <li>Python: al ejecutar el programa.</li>
+                        <li>Java/C#: a mano antes de distribuir el programa.</li>
+                    </ul>
+                    <p class="fragment">Pero esto no hace lento a Python! Es casi instantáneo y solo al inicio.<br>
+                        La lentitud no tiene que ver con cuándo compilamos.<p>
+                </section>
+
+
+				<section>
+                    <h3>Mito 2:<br>
+                        Lenguajes de tipado estático vs dinámico</h3>
+                </section>
+				<section>
+                    <p class="fragment">"En los lenguajes de tipado estático, todas las cosas tienen el tipo de dato definido en código."</p>
+                    <p class="fragment">"En los dinámicos, los tipos se saben recién en ejecución."</p>
+                    <p class="fragment">"Eso hace que los lenguajes dinámicos sean más lentos."</p>
+                </section>
+
+				<section>
+                    <h3>❌</h3>
+                    <p>No tan mal como el mito 1... Pero tampoco bien.</p>
+                    <p>Es una simplificación engañosa.</p>
+                </section>
+				<section>
+                    <p>✅ <strong>Todos</strong> los lenguajes tienen info de tipos estática y dinámica:</p>
+                    <ul class="fragment">
+                        <li>Estática: la que podemos saber mirando el código.</li>
+                        <li>Dinámica: la que requiere ejecutar el programa para saberse.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <p>Python tiene info estática de tipos?</p>
+                    <p class="fragment">Sí, bastante!</p>
+                    <p class="fragment">Y no me refiero a las type annotations siquiera!</p>
+                    <p class="fragment">La info estática puede ser <strong>INFERIDA.</strong></p>
+                </section>
+
+				<section>
+                    <p>Ej:</p>
+					<pre><code class="hljs python" data-trim data-line-numbers>
+                        cosas = [1, False, "hola", []]
+                        cosas[2].uppper()  # <-- sabemos qué tipo es `cosas[2]`?
+
+                        precio = 19.99
+                        cantidad = 4
+                        total = precio * cantidad  # <-- de qué tipo es `total`?
+
+                        if random() > 0.5:
+                            x = "hola"
+                        else:
+                            x = []
+                        # y acá? sabemos de qué tipo es `x`?
+					</code></pre>
+                </section>
+
+                <section>
+                    <p>La info puede usarse para hacer <strong>chequeos de tipos</strong>:</p>
+                    <ul>
+                        <li class="fragment">Estáticos: "no te compilo, estás queriendo hacer una operación inválida entre un string y un número".</li>
+                        <li class="fragment">Dinámicos: "te tiro un error, estás queriendo correr una operación inválida entre un string y un número".</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Tipado fuerte vs débil</h3>
+                    <p class="fragment">Los lenguajes que hacen más chequeos y te impiden hacer cosas inválidas, tienen <strong>tipado Fuerte</strong>.</p>
+                    <p class="fragment">Los lenguajes que te dejan hacer cosas inválidas e igual intentan devolver algo, tienen <strong>tipado Débil</strong>.</p>
+                </section>
+
+                <section>
+                    <p>Qué es Python por ejemplo?</p>
+                    <p class="fragment">❌ Tipado débil?</p>
+                    <p class="fragment"><strong>✅ Tipado fuerte!</strong></p>
+                </section>
+
+                <section>
+                    <h3>Bonus mito:</h3>
+                    <p class="fragment">Tipado dinámico no significa tipado débil!!!</p>
+                    <p class="fragment">En Python el chequeo es dinámico, pero fuerte.<br>
+                        En Javascript y PHP el tipeo es <a href="https://www.destroyallsoftware.com/talks/wat">débil</a>.</p>
+                </section>
+
+                <section>
+                    <h3>Tipado fuerte peeeeero...</h3>
+                    <p>Python es de tipado fuerte, pero no hace chequeos estáticos. Todos sus chequeos son dinámicos!</p>
+                    <p class="fragment">Y su lentitud tiene mucho más que ver con <strong>eso</strong>. Con dinámicamente resolver tipos (es complejo).</p>
+                </section>
+                <section>
+                    <img src="img/play.png" style="width: 20%" />
+                    <p>Cuando un programa corre persona.saludar()...</p>
+                    <ul>
+                        <li class="fragment">Java: el compilador ya se aseguró que el método existe y guardó info sobre dónde está definido.</li>
+                        <li class="fragment">Python: en tiempo real tiene que ver si está definido, dónde, etc. <strong>Esto es lo costoso.</strong></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Lenguajes vs performance</h3>
+                    <p>Repasemos un poco:</p>
+                </section>
+
+                <section>
+                    <ul>
+                        <li class="fragment">Los lenguajes realmente compilados son más rápidos que los realmente interpretados.</li>
+                        <li class="fragment">C# y Java no son realmente compilados, y Python no es realmente interpretado.</li>
+                        <li class="fragment">La performance en ellos no difiere por el modo de compilación, sino por cuándo se chequean tipos.</li>
+                        <li class="fragment">Que los chequeos sean dinámicos no significa que el tipado sea débil. Sí tiene un impacto en performance.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Importa entonces el lenguaje para performance?</h3>
+                    <p class="fragment">Depende! Recuerden:<br>
+                        <img src="img/cpu_vs_io.png" style="width: 40%" />
+                        <img src="img/cpu_heavy.png" style="width: 40%" />
+                    </p>
+                </section>
+
+                <section>
+                    <img src="img/paretto.png" style="width: 20%" />
+                    <h3>Consejo final: 80/20</h3>
+                    <p class="fragment">Muchas veces una pequeña parte del código es la que realmente necesita ser rápida.</p>
+                    <p class="fragment">...y es muy fácil escribir esa parte en algo más rápido y el resto en algo más mantenible :)</p>
+                </section>
+
+
+
+				<section>
+                    <h2>Preguntas?</h2>
+                </section>
+			</div>
+		</div>
+
+		<script src="reveal_js/reveal.js"></script>
+		<script src="reveal_js/plugin/notes.js"></script>
+		<script src="reveal_js/plugin/markdown.js"></script>
+		<script src="reveal_js/plugin/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+			});
+		</script>
+	</body>
+</html>
+
