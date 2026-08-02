@@ -166,7 +166,7 @@
 					<pre><code class="hljs python" data-trim data-line-numbers>
                         def actualizar_saldo(nuevo_pago):
                             saldo_actual = obtener_saldo_desde_la_db()
-                            saldo_actual += nuevo_pago.monto  # <-- acá
+                            saldo_actual += nuevo_pago.monto
                             guardar_saldo_en_la_db(saldo_actual)
 					</code></pre>
                     <p class="fragment">Qué pasa si nos pausan en la linea 3, otro hilo/proceso se ejecuta y cambia el saldo en la db, y luego nos vuelve a tocar a nosotros?</p>
