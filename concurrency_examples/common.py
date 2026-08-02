@@ -50,6 +50,7 @@ def show_ranking(ranking):
         last_likes = likes
 
         print(f"{position + 1}. {word}: {likes} likes {error}")
+    print()
 
 
 logging.basicConfig(
