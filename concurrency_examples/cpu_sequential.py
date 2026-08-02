@@ -4,6 +4,7 @@
 # dependencies = []
 # ///
 from datetime import datetime
+from random import randint
 from common import WORDS, logger, get_ranking_position, show_ranking
 
 
@@ -15,7 +16,7 @@ def analyze_and_rank_word(word, ranking):
     # silly slow calculation
     likes = 0
     for _ in range(1_000_000):
-        likes += len(word)
+        likes += randint(1, 10)
 
     # no semaphore needed here: there is a single thread of execution, so nothing else
     # can touch the ranking while we are reading and modifying it

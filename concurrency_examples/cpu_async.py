@@ -4,6 +4,7 @@
 # dependencies = []
 # ///
 from datetime import datetime
+from random import randint
 from asyncio import gather, run, sleep
 from common import BASE_URL, WORDS, logger, get_ranking_position, show_ranking
 
@@ -16,8 +17,9 @@ async def analyze_and_rank_word(word, ranking):
     # silly slow calculation
     likes = 0
     for _ in range(1_000_000):
-        await sleep(0)  # yield control to the event loop
-        likes += len(word)
+        likes += randint(1, 10)
+        if _ % 100_000 == 0:
+            await sleep(0)  # yield control to the event loop from time to time
 
     # no semaphore needed here: there are no awaits between reading the ranking and
     # modifying it, so no other coroutine can run in the middle of these two steps

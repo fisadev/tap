@@ -4,8 +4,8 @@
 # dependencies = ["requests"]
 # ///
 from datetime import datetime
+from random import randint
 from threading import Thread, Semaphore
-import requests
 from common import BASE_URL, WORDS, logger, get_ranking_position, show_ranking
 
 
@@ -17,9 +17,10 @@ def analyze_and_rank_word(word, ranking):
     Get the likes of a word, and add it to the ranking depending on that.
     """
     logger.info("%s: getting word data", word)
+    # silly slow calculation
     likes = 0
     for _ in range(1_000_000):
-        likes += len(word)
+        likes += randint(1, 10)
 
     with semaphore:
         logger.info("%s: calculating ranking position for %s likes", word, likes)

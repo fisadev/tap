@@ -4,6 +4,7 @@
 # dependencies = ["requests"]
 # ///
 from datetime import datetime
+from random import randint
 from multiprocessing import Process, Manager, Semaphore
 from common import BASE_URL, WORDS, logger, get_ranking_position, show_ranking
 
@@ -19,7 +20,7 @@ def analyze_and_rank_word(word, ranking):
     # silly slow calculation
     likes = 0
     for _ in range(1_000_000):
-        likes += len(word)
+        likes += randint(1, 10)
 
     with semaphore:
         logger.info("%s: calculating ranking position for %s likes", word, likes)
