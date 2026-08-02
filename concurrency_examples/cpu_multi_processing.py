@@ -1,4 +1,6 @@
 #!/usr/bin/env -S uv run --script
+# to show how this has no benefits with just one core, run it like this:
+# taskset -c 0 ./cpu_multi_processing.py
 from datetime import datetime
 from random import randint
 from multiprocessing import Process, Manager, Semaphore
