@@ -1,4 +1,5 @@
 #!/usr/bin/env -S uv run --script
+# alternatively, to make it fast, add this to the hasbang: --python pypy
 from datetime import datetime
 from random import randint
 from threading import Thread, Semaphore
