@@ -40,7 +40,7 @@ def main():
 
     show_ranking(ranking)
 
-    logger.info("Total time: %s", datetime.now() - start)
+    logger.info("Total time for %s cpu heavy tasks, sequential: %s", len(WORDS), datetime.now() - start)
 
 
 main()

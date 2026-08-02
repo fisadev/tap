@@ -43,7 +43,7 @@ async def main():
 
     show_ranking(ranking)
 
-    logger.info("Total time: %s", datetime.now() - start)
+    logger.info("Total time for %s io heavy tasks, async: %s", len(WORDS), datetime.now() - start)
 
 
 run(main())
