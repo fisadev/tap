@@ -241,19 +241,6 @@
                 </section>
 
 				<section>
-                    <img src="img/cpu_vs_io.png" style="width: 30%" />
-                    <h3>IO heavy code</h3>
-                </section>
-				<section>
-                    <img src="img/io_concurrency.png" style="width: 90%" />
-                    <ul>
-                        <li class="fragment">Si tenemos paralelismo real: ganamos performance por correr cosas al mismo tiempo.</li>
-                        <li class="fragment">Si tenemos solo concurrencia sin paralelismo (async, o MT/MP con un solo core): igual ganamos! Corremos cosas mientras otros hilos/procesos/corrutinas esperan IO.</li>
-                        <li class="fragment">Y async además facilita evitar race conditions.</li>
-                    </ul>
-                </section>
-
-				<section>
                     <img src="img/cpu_heavy.png" style="width: 30%" />
                     <h3>CPU heavy code</h3>
                 </section>
@@ -265,6 +252,25 @@
                         <li class="fragment">Y que MT/MP tampoco nos ayudan si tenemos un solo core.</li>
                         <li class="fragment">Hay que usar MT/MP y tener más de un core.</li>
                     </ul>
+                </section>
+
+				<section>
+                    <img src="img/cpu_vs_io.png" style="width: 30%" />
+                    <h3>IO heavy code</h3>
+                </section>
+				<section>
+                    <img src="img/io_concurrency.png" style="width: 90%" />
+                    <ul>
+                        <li class="fragment">Si tenemos paralelismo real: ganamos performance por correr cosas al mismo tiempo.</li>
+                        <li class="fragment">Si tenemos solo concurrencia sin paralelismo (async, o MT/MP con un solo core): igual ganamos! Corremos cosas mientras otros hilos/procesos/corrutinas esperan IO.</li>
+                        <li class="fragment">Y async además es más eficiente y facilita evitar race conditions.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <img src="img/io_concurrency_plus_parallelism.png" style="width: 40%" />
+                    <p class="fragment">Si tenemos N cores, podemos combinar y ser super performantes:<br>
+                        Un proceso por core, usando async en cada proceso para sacarle el máximo de jugo a cada core.</p>
                 </section>
 
 				<section>
