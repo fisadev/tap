@@ -1,6 +1,5 @@
 #!/usr/bin/env -S uv run --script
 # /// script
-# requires-python = ">=3.9"
 # dependencies = ["fastapi", "uvicorn"]
 # ///
 """Very simple server, with an endpoint that receives a word and returns a number of likes for it."""

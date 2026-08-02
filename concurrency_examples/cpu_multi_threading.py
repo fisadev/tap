@@ -1,8 +1,4 @@
 #!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.9"
-# dependencies = ["requests"]
-# ///
 from datetime import datetime
 from random import randint
 from threading import Thread, Semaphore

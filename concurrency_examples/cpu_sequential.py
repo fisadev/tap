@@ -1,8 +1,4 @@
 #!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.9"
-# dependencies = []
-# ///
 from datetime import datetime
 from random import randint
 from common import WORDS, logger, get_ranking_position, show_ranking
