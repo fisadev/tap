@@ -3,6 +3,7 @@
 # requires-python = ">=3.9"
 # dependencies = ["aiohttp"]
 # ///
+from datetime import datetime
 from asyncio import gather, run
 import aiohttp
 from common import BASE_URL, WORDS, logger, get_ranking_position, show_ranking
@@ -32,6 +33,8 @@ async def analyze_and_rank_word(word, ranking):
 
 async def main():
     """Analyze all the words and generate the ranking."""
+    start = datetime.now()
+
     ranking = []
 
     # launch all the coroutines and wait for them to finish
@@ -39,6 +42,8 @@ async def main():
     await gather(*coros)
 
     show_ranking(ranking)
+
+    logger.info("Total time: %s", datetime.now() - start)
 
 
 run(main())

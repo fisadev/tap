@@ -3,6 +3,7 @@
 # requires-python = ">=3.9"
 # dependencies = ["requests"]
 # ///
+from datetime import datetime
 import requests
 from common import BASE_URL, WORDS, logger, get_ranking_position, show_ranking
 
@@ -30,6 +31,8 @@ def analyze_and_rank_word(word, ranking):
 
 def main():
     """Analyze all the words and generate the ranking."""
+    start = datetime.now()
+
     ranking = []
 
     # analyze the words one by one, waiting for each request to finish before starting
@@ -38,6 +41,8 @@ def main():
         analyze_and_rank_word(word, ranking)
 
     show_ranking(ranking)
+
+    logger.info("Total time: %s", datetime.now() - start)
 
 
 main()

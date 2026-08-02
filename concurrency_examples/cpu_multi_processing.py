@@ -3,6 +3,7 @@
 # requires-python = ">=3.9"
 # dependencies = ["requests"]
 # ///
+from datetime import datetime
 from multiprocessing import Process, Manager, Semaphore
 from common import BASE_URL, WORDS, logger, get_ranking_position, show_ranking
 
@@ -30,6 +31,8 @@ def analyze_and_rank_word(word, ranking):
 
 def main():
     """Analyze all the words and generate the ranking."""
+    start = datetime.now()
+
     shared_memory = Manager()
     ranking = shared_memory.list([])
     processes = []
@@ -45,6 +48,8 @@ def main():
         process.join()
 
     show_ranking(ranking)
+
+    logger.info("Total time: %s", datetime.now() - start)
 
 
 main()
