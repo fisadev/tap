@@ -1,4 +1,6 @@
 import logging
+import os
+
 
 BASE_URL = "http://localhost:5000/get_likes/"
 WORDS = [
@@ -9,15 +11,17 @@ WORDS = [
     "dogs",
     "cats",
     "BTS",
+    "sandro",
     "python",
     "java",
-    "programming",
-    "TopicosAvanzadosDeProgramacion",
-    "ai",
-    "humans",
-    "fisa",
-    "mateo",
 ]
+
+repeat = int(os.environ.get("REPEAT", 0))
+if repeat:
+    extra_words = []
+    for i in range(1, repeat):
+        extra_words.extend([f"{word}_{i + 1}" for word in WORDS])
+    WORDS.extend(extra_words)
 
 
 def get_ranking_position(ranking, likes):
