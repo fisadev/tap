@@ -1,4 +1,5 @@
 #!/usr/bin/env -S uv run --script
+# alternatively, add this to the hasbang to make it way faster: --python pypy
 from datetime import datetime
 from random import randint
 from common import WORDS, logger, get_ranking_position, show_ranking
