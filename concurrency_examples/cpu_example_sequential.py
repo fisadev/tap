@@ -13,7 +13,7 @@ def analyze_and_rank_word(word, ranking):
     logger.info("%s: getting word data", word)
     # silly slow calculation
     likes = 0
-    for _ in range(1000000):
+    for _ in range(1_000_000):
         likes += len(word)
 
     # no semaphore needed here: there is a single thread of execution, so nothing else

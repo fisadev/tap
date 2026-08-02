@@ -14,7 +14,7 @@ async def analyze_and_rank_word(word, ranking):
     logger.info("%s: getting word data", word)
     # silly slow calculation
     likes = 0
-    for _ in range(1000000):
+    for _ in range(1_000_000):
         await sleep(0)  # yield control to the event loop
         likes += len(word)
 
