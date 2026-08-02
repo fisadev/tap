@@ -157,9 +157,16 @@
                     <p>Hasta ahora Multithreading y Multiprocessing suenan muy buenos. Pero...</p>
                 </section>
 				<section>
+                    <img src="img/speed.png" style="width: 20%" />
+                    <h3>Context Switching y Performance</h3>
+                    <p class="fragment">Cambiar entre procesos o hilos es costoso! Hay que descargar/volver a cargar info de contexto en el procesador.</p>
+                    <p class="fragment">Esto empeora cuantos más hilos/procesos tengamos.</p>
+                </section>
+
+				<section>
                     <img src="img/context_switch.png" style="width: 30%" />
                     <h3>Context Switching y Race Conditions</h3>
-                    <p>Si nos pausan y reanudan hilos/procesos en cualquier momento (cuando el OS decida), nuestra lógica se puede romper!</p>
+                    <p class="fragment">Si nos pausan y reanudan hilos/procesos en cualquier momento (cuando el OS decida), nuestra lógica se puede romper!</p>
                 </section>
 				<section>
                     <h3>Race conditions</h3>
@@ -201,6 +208,13 @@
                         <li class="fragment">Ideal: pausar durante esperas de IO para que otras corran.</li>
                         <li class="fragment">Las corrutinas tienen que colaborar: no "comerse" todo el CPU sin pausar.</li>
                     </ul>
+                </section>
+
+				<section>
+                    <h3>Bonus: performance</h3>
+                    <p class="fragment">Cambiar entre corrutinas es mucho más barato que cambiar entre hilos/procesos!<br>
+                        A veces a las corrutinas se les dice "hilos livianos".</p>
+                    <p class="fragment">Qué tan livianas?: hay servers async que responden 1 millón de requests por segundo.</p>
                 </section>
 
 				<section>
