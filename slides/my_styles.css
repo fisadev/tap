@@ -1,0 +1,4 @@
+/* Left-align the slide contents, instead of reveal.js' default centering */
+.reveal .slides {
+	text-align: left;
+}
