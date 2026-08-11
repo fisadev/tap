@@ -457,7 +457,7 @@
                 </section>
 
                 <section>
-                    <h3>Privacidad:</h3>
+                    <h3>Resolviendo la Privacidad (fácil):</h3>
                     <ul>
                         <li class="fragment">Las requests y responses se encriptan con encriptación asimétrica. Un intermediario ya no puede entender el contenido.</li>
                         <li class="fragment">Las claves (públicas y privadas) que se usan para el proceso son negociadas al inicio, son temporales, y nunca se mandan.</li>
@@ -466,12 +466,28 @@
                 </section>
 
                 <section>
-                    <h3>Autenticidad:</h3>
+                    <p>Ok, pero cómo sabemos que estamos hablando con el servidor correcto?</p>
+                </section>
+
+                <section>
+                    <h3>Resolviendo la Autenticidad (no tan fácil...):</h3>
                     <ul>
                         <li class="fragment">Al hablar con un servidor, le pedimos que firme criptográficamente sus responses con un certificado propio del sitio.</li>
                         <li class="fragment">Validamos que las responses fueron realmente firmadas con ese certificado.</li>
-                        <li class="fragment">Pero además validamos el certificado mismo, que tiene que haber sido emitido por una entidad segura conocida.</li>
-                        <li class="fragment">Nuestra PC tiene los certificados públicos de las entidades conocidas, que permiten validar la emisión de esos certificados de los sitios.</li>
+                        <li class="fragment">Ahora estamos seguros que las responses vienen desde ese sitio!... no?</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Y si el certificado que nos compartió es inventado?</p>
+                    <p>Sabemos que las responses fueron firmadas con <strong>ese certificado</strong>... pero no sabemos si el certificado es el real de ese sitio!</p>
+                </section>
+
+                <section>
+                    <h3>Resolviendo la Autenticidad (no tan fácil x2...):</h3>
+                    <ul>
+                        <li class="fragment">Además validamos el certificado mismo: tiene que haber sido emitido por una entidad segura conocida (el certificado mismo está firmado!).</li>
+                        <li class="fragment">Nuestra PC tiene los certificados públicos de las entidades conocidas, que permiten validar la emisión de los certificados de los sitios.</li>
                     </ul>
                 </section>
 
@@ -479,7 +495,7 @@
                     <p>Dicho de otra forma:</p>
                     <ul>
                         <li class="fragment">Nos aseguramos que las responses vinieron de alguien que tiene un certificado de "espadas.com" (chequeando la firma de las responses).</li>
-                        <li class="fragment">Y validamos que el certificado de "espadas.com" fue emitido por una entidad en la que confiamos (chequeando la firma del certificado del sitio).</li>
+                        <li class="fragment">Y validamos que el certificado de "espadas.com" fue emitido por una entidad en la que confiamos (chequeando la firma del certificado mismo).</li>
                     </ul>
                 </section>
 
@@ -492,7 +508,7 @@
                 <section>
                     <p>Y si alguien se roba las llaves de la "sellería"?</p>
                     <p class="fragment">Qué pasa si la entidad certificadora conocida deja de ser segura?...</p>
-                    <p class="fragment">Actualizaciones de seguridad del sistema operativo! Entre otras cosas, actualizan los certificados de entidades confiables en nuestra PC.</p>
+                    <p class="fragment">Actualizaciones de seguridad del sistema operativo! Entre otras cosas, actualizan los certificados de entidades confiables que tiene nuestra PC.</p>
                 </section>
 
                 <section>
