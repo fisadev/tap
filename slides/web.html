@@ -282,6 +282,241 @@
                     <h3>HTTP 2.0</h3>
                     <p class="fragment">Igual que HTTP, solo que permite <strong>reutilizar la conexión</strong> para múltiples request/responses.</p>
                 </section>
+
+                <section>
+                    <img src="static/img/play.png" style="width: 20%" />
+                    <h3>Demo</h3>
+                    <p>Hablemos HTTP a mano.</p>
+                </section>
+
+                <section>
+                    <h3>Sin un navegador</h3>
+                    <p>El cliente es siempre un navegador? Qué puede ser en vez?</p>
+                </section>
+
+                <section>
+                    <p>Hoy usamos HTTP no solo para navegar, sino para comunicar todo tipo de sistemas entre si:</p>
+                    <p><strong>APIs web!</strong></p>
+                </section>
+
+                <section>
+                    <img src="static/img/apis.png" style="width: 20%" />
+                    <h3>APIs web</h3>
+                    <p class="fragment">Programas que se hablan usando HTTP.</p>
+                    <p class="fragment">El cliente puede ser cualquier programa, no solo un navegador.</p>
+                    <p class="fragment">El contenido suele ser algún formato estándar (JSON, XML en el pasado, etc).</p>
+                </section>
+
+                <section>
+                    <h3>El problema de la falta de estado</h3>
+                    <p>Cómo sabe un sitio web qué mostrarme a mi en particular?</p>
+                </section>
+
+                <section>
+                    <p>Por hacer esas requests desde una misma conexión?</p>
+                    <p class="fragment">❌ No. Incluso en HTTP 2.0, la conexión igual se cierra al terminar de cargar la página. El próximo click es una nueva conexión.</p>
+                </section>
+                
+                <section>
+                    <p>Por mi IP?</p>
+                    <p class="fragment">❌ Imposible. Cambia, y compartimos IP pública entre muchos aparatos en al misma red.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/cookies.png" style="width: 20%" />
+                    <h3>Cookies</h3>
+                    <p>Usando headers para mantener sesiones.</p>
+                </section>
+
+                <section>
+                    <div class="r-stack">
+                        <p class="fragment fade-in-then-out">
+                            <img src="static/img/www.png" style="width: 20%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/code.png" style="width: 8%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/server.png" style="width: 10%" />
+                            <br>La primer request no tiene nada especial.
+                        </p>
+                        <p class="fragment fade-in-then-out">
+                            <img src="static/img/www.png" style="width: 20%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/server.png" style="width: 10%" />
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <br>El servidor recibe esta request, y decide crear una nueva "sesión". La sesión tiene un id asociado.
+                        </p>
+                        <p class="fragment fade-in-then-out">
+                            <img src="static/img/www.png" style="width: 20%" />
+                            <img src="static/img/arrow_left.png" style="width: 10%" />
+                            <img src="static/img/arrow_left.png" style="width: 10%" />
+                            <img src="static/img/code.png" style="width: 8%" />
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <img src="static/img/arrow_left.png" style="width: 10%" />
+                            <img src="static/img/server.png" style="width: 10%" />
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <br>En su response, el servidor incluye un header <span style="color: #b103fc">"Cookie"</span>, con el id de la sesión.
+                        </p>
+                        <p class="fragment fade-in-then-out">
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <img src="static/img/www.png" style="width: 20%" />
+                            <img src="static/img/arrow_left.png" style="width: 10%" />
+                            <img src="static/img/arrow_left.png" style="width: 10%" />
+                            <img src="static/img/arrow_left.png" style="width: 10%" />
+                            <img src="static/img/arrow_left.png" style="width: 10%" />
+                            <img src="static/img/server.png" style="width: 10%" />
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <br>El navegador lee ese header (la cookie) de la response y guarda el valor en disco.
+                        </p>
+                        <p class="fragment fade-in-then-out">
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <img src="static/img/www.png" style="width: 20%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/code.png" style="width: 10%" />
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/server.png" style="width: 10%" />
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <br>En cada nueva request que haga al mismo servidor, el navegador <strong>envía</strong> la cookie como un header.
+                        </p>
+                        <p class="fragment fade-in-then-out">
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <img src="static/img/www.png" style="width: 20%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/code.png" style="width: 10%" />
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <img src="static/img/arrow_right.png" style="width: 10%" />
+                            <img src="static/img/server.png" style="width: 10%" />
+                            <img src="static/img/cookies.png" style="width: 10%" />
+                            <br>El servidor entonces sabe que esas requests pertenecen a la misma sesión, porque todas traen el mismo id (en la cookie).
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Sesión != estar logueado</h3>
+                    <p>Esto sucede incluso cuando no estamos logueados. Siempre tenemos una sesión de navegación.</p>
+                    <p class="fragment">Al loguearnos, el servidor guarda de su lado "sesión 42 = fisa".</p>
+                </section>
+
+                <section>
+                    <h3>Consumir preferentemente antes del...</h3>
+                    <p>Las cookies se pueden configurar para que expiren: el servidor le dice al navegador (por headers) cómo/cuándo expiran.</p>
+                    <p class="fragment">No podemos confiar en que el navegador haga caso: el servidor debe validar que no mande cookies expiradas.</p>
+                </section>
+
+                <section>
+                    <h3>"Desea aceptar las cookies...?"</h3>
+                    <p>Hasta ahora parece todo muy inofensivo. Por qué esas confirmaciones sobre cookies?</p>
+                </section>
+                <section>
+                    <p>Ej: fisa visita "espadas-secretas.com", que tiene publicidad embebida provista por Google. Para obtener el pedacito de publicidad, el navegador:</p>
+                    <p class="fragment">Envía una request a Google pidiendo la publicidad...</p>
+                    <p class="fragment">...con la cookie de sesión de Google (es una request a servers de Google)...</p>
+                    <p class="fragment">...pero indicándole (por headers) que se hizo desde la página "espadas-secretas.com"!</p>
+                </section>
+                <section>
+                    <p><strong>Consecuencia</strong>: Google sabe que fisa visitó "espadas-secretas.com", sin que fisa haya decidido darle esa info 😡</p>
+                    <p class="fragment">Las cookies de <strong>terceros</strong> (contenido embebido) se pueden usar para violar la <strong>privacidad de los usuarios</strong>.</p>
+                    <p class="fragment">Por ley europea hace falta pedir permiso, pero los usuarios aceptan sin tener idea.</p>
+                    <p class="fragment">Algunos navegadores están empezando a bloquearlas directamente! 💪</p>
+                </section>
+
+                <section>
+                    <p>Y ya que hablamos de privacidad...</p>
+                </section>
+
+                <section>
+                    <img src="static/img/secure.png" style="width: 20%" />
+                    <h3>HTTP es seguro?</h3>
+                </section>
+
+                <section>
+                    <p>Si la request y response son simplemente texto, quiénes pueden leer su contenido?</p>
+                    <p class="fragment">😱 <strong>Problema de privacidad</strong>: cualquier intermediario (el router de starbucks, mi proveedor de internet, etc) podría leer todo!</p>
+                </section>
+
+                <section>
+                    <p>Cuando enviamos una request y recibimos una response, cómo sabemos si estamos hablando realmente con el servidor que queremos?</p>
+                    <p class="fragment">😱 <strong>Problema de autenticidad</strong>: cualquier intermediario también podría hacerse pasar por el servidor!</p>
+                </section>
+
+                <section>
+                    <p><strong>HTTP es inseguro. Solución: HTTPS</strong></p>
+                </section>
+
+                <section>
+                    <img src="static/img/secure.png" style="width: 20%" />
+                    <h3>HTTPS</h3>
+                    <p>Matamos dos pájaros de un tiro usando encriptación asimétrica y certificados.</p>
+                </section>
+
+                <section>
+                    <h3>Privacidad:</h3>
+                    <ul>
+                        <li class="fragment">Las requests y responses se encriptan con encriptación asimétrica. Un intermediario ya no puede entender el contenido.</li>
+                        <li class="fragment">Las claves (públicas y privadas) que se usan para el proceso son negociadas al inicio, son temporales, y nunca se mandan.</li>
+                        <li class="fragment"><a href="https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange">(el algoritmo para lograr eso es muy interesante!)</a></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Autenticidad:</h3>
+                    <ul>
+                        <li class="fragment">Al hablar con un servidor, le pedimos que firme criptográficamente sus responses con un certificado propio del sitio.</li>
+                        <li class="fragment">Validamos que las responses fueron realmente firmadas con ese certificado.</li>
+                        <li class="fragment">Pero además validamos el certificado mismo, que tiene que haber sido emitido por una entidad segura conocida.</li>
+                        <li class="fragment">Nuestra PC tiene los certificados públicos de las entidades conocidas, que permiten validar la emisión de esos certificados de los sitios.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Dicho de otra forma:</p>
+                    <ul>
+                        <li class="fragment">Nos aseguramos que las responses vinieron de alguien que tiene un certificado de "espadas.com" (chequeando la firma de las responses).</li>
+                        <li class="fragment">Y validamos que el certificado de "espadas.com" fue emitido por una entidad en la que confiamos (chequeando la firma del certificado del sitio).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>O con una analogía:</p>
+                    <p class="fragment">Che, mandame todas tus cartas con un sello que solo vos tenés.</p>
+                    <p class="fragment">...pero además voy a la "sellería" a que me validen que ese es realmente tu sello y nadie tiene otro igual.</p>
+                </section>
+
+                <section>
+                    <p>Y si alguien se roba las llaves de la "sellería"?</p>
+                    <p class="fragment">Qué pasa si la entidad certificadora conocida deja de ser segura?...</p>
+                    <p class="fragment">Actualizaciones de seguridad del sistema operativo! Entre otras cosas, actualizan los certificados de entidades confiables en nuestra PC.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/secure.png" style="width: 10%" />
+                    <h3>HTTPS, resumiendo</h3>
+                    <ul>
+                        <li class="fragment">Encriptación de requests y responses: intermediarios no nos pueden espiar (privacidad!).</li>
+                        <li class="fragment">Validación de identidad del servidor: intermediarios no se pueden hacer pasar por el sitio (autenticidad!).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Pero no es gratis...</p>
+                    <ul>
+                        <li class="fragment">Hay que comprar los certificados, que cuestan bastante... o usar Lets Encrypt, que es genial, segura y gratis!</li>
+                        <li class="fragment">Hay que configurar el server con los certificados.</li>
+                        <li class="fragment">Hay que renovar periódicamente los certificados (vencen).</li>
+                        <li class="fragment">Y firmar, encriptar y desencriptar cuesta CPU!</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Preguntas?</h2>
+                </section>
             </div>
 		</div>
 
