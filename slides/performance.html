@@ -9,14 +9,14 @@
 
 		<title>TAP | Performance</title>
 
-		<link rel="stylesheet" href="reveal_js/reset.css" />
-		<link rel="stylesheet" href="reveal_js/reveal.css" />
-        <link rel="stylesheet" href="reveal_js/theme/night.css" />
+		<link rel="stylesheet" href="static/reveal_js/reset.css" />
+		<link rel="stylesheet" href="static/reveal_js/reveal.css" />
+        <link rel="stylesheet" href="static/reveal_js/theme/night.css" />
 
 		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="reveal_js/plugin/highlight/monokai.css" />
+		<link rel="stylesheet" href="static/reveal_js/plugin/highlight/monokai.css" />
         <!-- My style overrides -->
-		<link rel="stylesheet" href="my_styles.css" />
+		<link rel="stylesheet" href="static/my_styles.css" />
 	</head>
 	<body>
 		<div class="reveal">
@@ -110,7 +110,7 @@
                     <p class="fragment">Cuál de los tiempos fue mayor en este ejemplo?</p>
                 </section>
 				<section>
-                    <img src="img/cpu_vs_io.png" style="width: 80%" />
+                    <img src="static/img/cpu_vs_io.png" style="width: 80%" />
                     <p>Espera de IO, por mucho! Ej: normalmente es un 90% del tiempo de una request web típica.</p>
                 </section>
 
@@ -124,7 +124,7 @@
                     </ul>
                 </section>
 				<section>
-                    <img src="img/cpu_vs_io.png" style="width: 80%" />
+                    <img src="static/img/cpu_vs_io.png" style="width: 80%" />
                     <p>En gran parte de las apps "normales", <strong>IO domina por lejos.</strong></p>
                     <p class="fragment">...y eso cambia por completo la efectividad de las soluciones que charlamos!</p>
                     <p class="fragment">Probemos con un ejemplo: app web "normal".</p>
@@ -160,11 +160,11 @@
                 </section>
 
 				<section>
-                    <img src="img/cpu_vs_io.png" style="width: 80%" />
+                    <img src="static/img/cpu_vs_io.png" style="width: 80%" />
                     <p>En general, achicar tiempos de IO o hacer otras cosas mientras, incrementa muchiiiiiisimo más la performance que un lenguaje o framework más rápido.</p>
                 </section>
 				<section>
-                    <img src="img/cpu_heavy.png" style="width: 80%" />
+                    <img src="static/img/cpu_heavy.png" style="width: 80%" />
                     <p><strong>Salvo cuando IO no domina!:</strong><br>
                         juegos, cómputo heavy, cómputo más simple pero en hardware limitado como un Arduino, etc.</p>
                 </section>
@@ -173,7 +173,7 @@
                     <p>Hablando de juegos... por qué una GPU acelera? Por qué sirve para performance?</p>
                 </section>
 				<section>
-                    <img src="img/gpu.png" style="width: 40%" />
+                    <img src="static/img/gpu.png" style="width: 40%" />
                     <h2>GPUs y performance</h2>
                     <p>Qué es una GPU? Qué tiene de especial? En qué difiere de un procesador normal?</p>
                 </section>
@@ -186,12 +186,12 @@
                 </section>
 
 				<section>
-                    <img src="img/cpu_vs_gpu.png" style="width: 80%" />
+                    <img src="static/img/cpu_vs_gpu.png" style="width: 80%" />
                     <p class="fragment">...ok... pero para qué?</p>
                 </section>
 
 				<section>
-                    <img src="img/vector_calc.png" style="width: 40%" />
+                    <img src="static/img/vector_calc.png" style="width: 40%" />
                     <h3>Cálculo vectorizado</h3>
                     <p>Hay problemas donde naturalmente lo que hacemos es una cantidad muy grande de operaciones sencillas, idénticas e independientes (paralelizables!)</p>
                 </section>
@@ -251,7 +251,7 @@
                 </section>
 
 				<section>
-                    <img src="img/inspect.png" style="width: 20%" />
+                    <img src="static/img/inspect.png" style="width: 20%" />
                     <h2>Profiling</h2>
                     <p class="fragment">El acto de medir el consumo de recursos (memoria, tiempo) de un programa durante su ejecución.</p>
                 </section>
@@ -276,8 +276,8 @@
                 </section>
 
                 <section>
-                    <a href="img/example_profiler_report.png">
-                        <img src="img/example_profiler_report.png" style="width: 80%" />
+                    <a href="static/img/example_profiler_report.png">
+                        <img src="static/img/example_profiler_report.png" style="width: 80%" />
                     </a>
                     <p><a href="https://github.com/fisadev/tap/tree/main/profiling_example">Código en el repo</a></p>
                 </section>
@@ -296,13 +296,13 @@
                 </section>
 
 				<section>
-                    <img src="img/tree.png" style="width: 20%" />
+                    <img src="static/img/tree.png" style="width: 20%" />
                     <h2>Complejidad computacional</h2>
                     <p class="fragment">Comparemos la performance de algoritmos entendiendo cómo <strong>escalan</strong>.</p>
                 </section>
 
 				<section>
-                    <img src="img/timeline.png" style="width: 80%" />
+                    <img src="static/img/timeline.png" style="width: 80%" />
                     <p>"cuándo le salió esa mancha en la nariz al perro??"</p>
                 </section>
 
@@ -315,7 +315,7 @@
                 </section>
 
                 <section>
-                    <img src="img/algo_complexity.png" style="width: 80%" />
+                    <img src="static/img/algo_complexity.png" style="width: 80%" />
                 </section>
 
 				<section>
@@ -348,7 +348,7 @@
                 </section>
 
 				<section>
-                    <img src="img/code.png" style="width: 10%" />
+                    <img src="static/img/code.png" style="width: 10%" />
                     <h2>Lenguajes y performance</h2>
                     <p>Qué lenguaje uso? Qué hace que un lenguaje sea rápido o lento?</p>
                 </section>
@@ -359,7 +359,7 @@
                 </section>
 
 				<section>
-                    <img src="img/mythbusters.png" style="width: 80%" />
+                    <img src="static/img/mythbusters.png" style="width: 80%" />
                 </section>
 
 				<section>
@@ -486,7 +486,7 @@
                     <p class="fragment">Y su lentitud tiene mucho más que ver con <strong>eso</strong>. Con dinámicamente resolver tipos (es complejo).</p>
                 </section>
                 <section>
-                    <img src="img/play.png" style="width: 10%" />
+                    <img src="static/img/play.png" style="width: 10%" />
                     <p>Cuando un programa corre persona.saludar()...</p>
                     <ul>
                         <li class="fragment">Java: el compilador ya se aseguró que el método existe y guardó info sobre dónde está definido.</li>
@@ -511,8 +511,8 @@
                 <section>
                     <h3>Importa entonces el lenguaje para performance?</h3>
                     <p class="fragment">Depende! Recuerden:<br>
-                        <img src="img/cpu_vs_io.png" style="width: 40%" />
-                        <img src="img/cpu_heavy.png" style="width: 40%" />
+                        <img src="static/img/cpu_vs_io.png" style="width: 40%" />
+                        <img src="static/img/cpu_heavy.png" style="width: 40%" />
                     </p>
                 </section>
 
@@ -522,7 +522,7 @@
                 </section>
 
                 <section>
-                    <img src="img/paretto.png" style="width: 20%" />
+                    <img src="static/img/paretto.png" style="width: 20%" />
                     <h3>Consejo final: 80/20</h3>
                     <p class="fragment">Muchas veces una pequeña parte del código es la que realmente necesita ser rápida.</p>
                     <p class="fragment">...y es muy fácil escribir esa parte en algo más rápido y el resto en algo más mantenible :)</p>
@@ -534,11 +534,11 @@
 			</div>
 		</div>
 
-		<script src="reveal_js/reveal.js"></script>
-		<script src="reveal_js/plugin/notes.js"></script>
-		<script src="reveal_js/plugin/markdown.js"></script>
-		<script src="reveal_js/plugin/highlight.js"></script>
-		<script src="init_slides.js"></script>
+		<script src="static/reveal_js/reveal.js"></script>
+		<script src="static/reveal_js/plugin/notes.js"></script>
+		<script src="static/reveal_js/plugin/markdown.js"></script>
+		<script src="static/reveal_js/plugin/highlight.js"></script>
+		<script src="static/init_slides.js"></script>
 	</body>
 </html>
 
