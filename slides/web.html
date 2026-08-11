@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+
+		<title>TAP | Arquitectura de la web</title>
+
+		<link rel="stylesheet" href="reveal_js/reset.css" />
+		<link rel="stylesheet" href="reveal_js/reveal.css" />
+        <link rel="stylesheet" href="reveal_js/theme/night.css" />
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="reveal_js/plugin/highlight/monokai.css" />
+        <!-- My style overrides -->
+		<link rel="stylesheet" href="my_styles.css" />
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+                    <h2>Arquitectura de la Web</h2>
+                    <p>Tópicos Avanzados de Programación</p>
+                </section>
+
+                <section>
+                    <h3>Qué vamos a ver?</h3>
+                    <ul>
+                        <li class="fragment">No vamos a aprender a hacer una web, eso es fácil con herramientas modernas.</li>
+                        <li class="fragment">Vamos a enfocarnos en entender cómo funcionan las cosas.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>En particular:</p>
+                    <ul>
+                        <li class="fragment">HTTP por dentro (incluyendo HTTP 2.0, y HTTPS/SSL).</li>
+                        <li class="fragment">Manejo de estado/sesiones (y sus temas de privacidad).</li>
+                        <li class="fragment">DNS.</li>
+                        <li class="fragment">Cómo funciona un framework web por dentro.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="img/www.png" style="width: 40%" />
+                    <h3>Qué pasa cuando entramos a una web?</h3>
+                </section>
+
+                <section>
+                    <ol>
+                        <li class="fragment">Navegador busca dónde está el server.</li>
+                        <li class="fragment">Navegador abre conexión al server.</li>
+                        <li class="fragment">Navegador pide algo (request).</li>
+                        <li class="fragment">Servidor recibe pedido, procesa, prepara una respuesta.</li>
+                        <li class="fragment">Servidor devuelve respuesta (response).</li>
+                        <li class="fragment">Navegador muestra la respuesta al usuario.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h3>1. Dónde está el server?</h3>
+                    <p>http://www.noticias.com/policiales/hoy</p>
+                </section>
+
+                <section>
+                    <p><strong><span style="color: cyan">http://</span><span style="color: magenta">www.noticias.com</span><span style="color: lightgreen">/policiales/hoy</span></strong></p>
+                    <p class="fragment"><span style="color: magenta">Servidor</span> al que queremos hablarle: un dominio o una IP.</p>
+                    <p class="fragment"><span style="color: cyan">Protocolo</span> con el que queremos comunicarnos: HTTP, HTTPS, FTP, etc.</p>
+                    <p class="fragment"><span style="color: lightgreen">Ruta</span> de lo que queremos pedir: una "URI", que identifica lo que queremos pedir.</p>
+                </section>
+
+                <section>
+                    <p>Para llegar al <span style="color: magenta">servidor</span> necesitmos su IP.<br>
+                        Qué pasa si es un dominio?</p>
+                    <p class="fragment">DNS! Lo dejamos para dentro de un rato :)<br>
+                        Por ahora asumamos que conocemos su IP.</p>
+                </section>
+
+                <section>
+                    <h3>2. Abrir una conexión</h3>
+                    <p>Qué tipo de conexión abrimos?</p>
+                    <p>A qué puerto?</p>
+                </section>
+
+                <section>
+                    <p>Conexión <strong>TCP/IP</strong>.</p>
+                    <p>Al puerto <strong>80 para HTTP, 443 para HTTPS</strong>, o lo especificamos a mano.</p>
+                    <p>Ej: <span style="color: cyan">http://</span><span style="color: magenta">www.noticias.com:9090</span><span style="color: lightgreen">/policiales/hoy</span></p>
+                </section>
+
+                <section>
+                    <h3>3. Pedir algo</h3>
+                    <p>Cómo le pedimos algo al servidor usando esa conexión?</p>
+                    <p class="fragment">Enviamos una petición (request) HTTP!</p>
+                </section>
+
+                <section>
+                    <img src="img/code.png" style="width: 15%" />
+                    <h3>HTTP</h3>
+                    <p>Es un <strong>protocolo</strong> que permite a programas hablarse entre si, con <strong>pedidos y respuestas</strong>.</p>
+                </section>
+
+                <section>
+                    <ul>
+                        <li class="fragment">Las peticiones y respuestas se mandan en texto plano.</li>
+                        <li class="fragment">Cada petición recibe <strong>una sola</strong> respuesta.</li>
+                        <li class="fragment">Luego de la respuesta, se cierra la conexión (HTTP 1.0).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Request HTTP</h3>
+                    <div class="columns">
+                        <div>
+                            <pre><code class="hljs http" data-trim data-line-numbers>
+                                GET /policiales/hoy HTTP/1.1
+                                User-Agent: Mozilla/4.0
+                                Host: www.noticias.com
+                                Accept: text/html
+                                Accept-Language: en-us
+                            </code></pre>
+                        </div>
+                        <div style="font-size: 0.7em" class="r-stack">
+                            <div class="fragment fade-in-then-out">
+                                <p><strong>1. Request line</strong></p>
+                                <p><span style="color: #fc035e">Método</span>: qué tipo de acción queremos hacer (GET, POST, ...).</p>
+                                <p><span style="color: #b0ed2b">URI</span>: identificador sobre lo que queremos actuar.</p>
+                                <p>Y el protocolo que queremos usar.</p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p><span style="color: #fc035e">GET</span> (para pedir datos) y <span style="color: #fc035e">POST</span> (para enviar datos) son los verbos más comunes.</p>
+                                <p>Los demás se usan internamente para cosas como caché, o los usamos para APIs REST.</p>
+                                <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods">[ lista completa ]</a></p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p>Navegar a una url, click en links, etc son normalmente un GET.</p>
+                                <p>Formularios que guarden datos usan normalmente POST.</p>
+                                <p>El navegador se comporta diferente ante un refresh de un GET vs un POST.</p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p><strong><span style="color: #b103fc">2..N Headers</span> (cabeceras)</strong></p>
+                                <p>Pares de "clave: valor" que dan información extra (metadatos) sobre la petición y lo que esperamos como resultado.</p>
+                                <p>Libres, pero relativamente estandarizados.</p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p><strong>Algunos headers conocidos</strong></p>
+                                <p><span style="color: #b103fc">User-agent</span>: qué navegador y sistema operativo somos.</p>
+                                <p><span style="color: #b103fc">Host</span>: a qué dominio le queremos hablar (por si varios apuntan al mismo servidor).</p>
+                                <p><span style="color: #b103fc">Accept</span>: qué formato esperamos en la respuesta.</p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p><strong>Body (cuerpo)</strong></p>
+                                <p>Viene luego de una línea en blanco.</p>
+                                <p>Vacío en este caso.</p>
+                                <p>Si estamos enviando datos, los datos mismos van al final (ej: un archivo, datos de un formulario, etc).</p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p>Dos líneas en blanco marcan el final de la request.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>4. Servidor procesa</h3>
+                    <p>Al servidor le llegó la petición. Y ahora qué?</p>
+                </section>
+
+                <section>
+                    <p>Técnicamente, cualquier cosa!</p>
+                    <p class="fragment">Pero normalmente: leer o guardar datos de la base de datos, armar un HTML con la respuesta, etc.</p>
+                    <p class="fragment">Puede estar programado en cualquier cosa! Mientras sepa escuchar en un puerto y hablar HTTP, alcanza.</p>
+                </section>
+
+                <section>
+                    <h3>4. Servidor responde</h3>
+                    <p>Sin importar lo que haga, el servidor tiene que terminar devolviendo una <strong>Response HTTP</strong>.</p>
+                </section>
+
+                <section>
+                    <h3>Response HTTP</h3>
+                    <div class="columns">
+                        <div>
+                            <pre><code class="hljs http" data-trim data-line-numbers>
+                                HTTP/1.1 200 OK
+                                Date: Mon, 27 Jul 2009 12:28:53 GMT
+                                Server: Noticias.com
+                                Content-Length: 88
+                                Content-Type: text/html
+
+                                &lt;html&gt;Policiales:...&lt;/html&gt;
+                            </code></pre>
+                        </div>
+                        <div style="font-size: 0.7em" class="r-stack">
+                            <div class="fragment fade-in-then-out">
+                                <p><strong>1. Response line</strong></p>
+                                <p>Protocolo: el servidor nos informa en qué protocolo nos responde.</p>
+                                <p>Código de estado: un número y texto que nos dicen qué tipo de resultado tuvo la petición.</p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p>Hay muchos códigos de respuesta posibles. Algunos ejemplos:</p>
+                                <p>
+                                    200: la petición fue exitosa.<br>
+                                    301: lo pedido se movió a otra url.<br>
+                                    401: te falta autenticarte.<br>
+                                    403: te faltan permisos.<br>
+                                    404: lo pedido no existe.<br>
+                                    500: el servidor tuvo un error procesando la petición.<br>
+                                </p>
+                                <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status">[ lista completa ]</a></p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p><strong><span style="color: #b103fc">2..N Headers</span> (cabeceras)</strong></p>
+                                <p>Pares de "clave: valor" que dan información extra (metadatos) sobre la respuesta.</p>
+                                <p>Libres, pero relativamente estandarizados.</p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p><strong>Algunos headers conocidos</strong></p>
+                                <p><span style="color: #b103fc">Content-type</span>: qué tipo de contenido nos devolvió el servidor (HTML, JSON, imagen, etc).</p>
+                                <p><span style="color: #b103fc">Content-length</span>: cuántos bytes tiene el cuerpo de la respuesta.</p>
+                                <p><span style="color: #b103fc">Date</span>: a qué hora fue generada la respuesta.</p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p><strong>Body (cuerpo)</strong></p>
+                                <p>Viene luego de una línea en blanco.</p>
+                                <p>Tiene el contenido de la respuesta propiamente dicho.</p>
+                                <p>Puede ser cualquier cosa! Pero normalmente: HTML, JS, CSS, imágenes, etc.</p>
+                            </div>
+                            <div class="fragment fade-in-then-out">
+                                <p>El final de la respuesta viene dado por el <span style="color: #b103fc">Content-length</span> (o por cierre de la conexión).</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+			</div>
+		</div>
+
+		<script src="reveal_js/reveal.js"></script>
+		<script src="reveal_js/plugin/notes.js"></script>
+		<script src="reveal_js/plugin/markdown.js"></script>
+		<script src="reveal_js/plugin/highlight.js"></script>
+		<script src="init_slides.js"></script>
+	</body>
+</html>
