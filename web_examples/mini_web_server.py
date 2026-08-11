@@ -1,8 +1,8 @@
 import socket
 
-# creamos un socket que escucha conexiones TCP en el puerto 8000
-servidor = socket.create_server(("localhost", 8000))
-print("Escuchando en http://localhost:8000")
+# creamos un socket que escucha conexiones TCP en el puerto 5000
+servidor = socket.create_server(("localhost", 5000))
+print("Escuchando en http://localhost:5000")
 
 while True:
     # esperamos a que alguien se conecte, y leemos lo que nos manda
