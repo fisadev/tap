@@ -1,18 +1,16 @@
 #!/usr/bin/env -S uv run --script
 # /// script
-# dependencies = ["fastapi", "uvicorn"]
+# dependencies = ["flask"]
 # ///
-from fastapi import FastAPI
-import uvicorn
+from flask import Flask
 
+# Initialize the Flask application
+app = Flask(__name__)
 
-app = FastAPI()
+# Define the route for a page
+@app.route('/hello/<name>')
+def hello_world(name):
+    return f"<html><body><h1>Hello {name}!</h1></body></html>"
 
-
-@app.get("/get_likes/{word}")
-async def get_likes(word: str):
-    return {"received_word": word, "likes": 42}
-
-
-uvicorn.run(app, host="0.0.0.0", port=5000)
-
+# Run the local development server
+app.run(debug=True)
