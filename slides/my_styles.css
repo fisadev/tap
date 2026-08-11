@@ -2,3 +2,23 @@
 .reveal .slides {
 	text-align: left;
 }
+
+/* Side by side columns inside a slide */
+.reveal .columns {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+}
+
+.reveal .columns > * {
+	/* equal widths, and min-width lets wide code blocks shrink instead of
+	   overflowing the slide */
+	flex: 1;
+	min-width: 0;
+}
+
+/* code blocks fill their column, instead of the theme's centered 90% */
+.reveal .columns pre {
+	width: 100%;
+	margin: 0;
+}
