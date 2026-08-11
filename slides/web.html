@@ -107,6 +107,7 @@
                     <ul>
                         <li class="fragment">Las peticiones y respuestas se mandan en texto plano.</li>
                         <li class="fragment">Cada petición recibe <strong>una sola</strong> respuesta.</li>
+                        <li class="fragment">Cada petición es independiente de las anteriores.</li>
                         <li class="fragment">Luego de la respuesta, se cierra la conexión (HTTP 1.0).</li>
                     </ul>
                 </section>
@@ -203,14 +204,15 @@
                             <div class="fragment fade-in-then-out">
                                 <p>Hay muchos códigos de respuesta posibles. Algunos ejemplos:</p>
                                 <p>
-                                    200: la petición fue exitosa.<br>
-                                    301: lo pedido se movió a otra url.<br>
-                                    401: te falta autenticarte.<br>
-                                    403: te faltan permisos.<br>
-                                    404: lo pedido no existe.<br>
-                                    500: el servidor tuvo un error procesando la petición.<br>
+                                    <a href="http://http.cat/200">200</a>: la petición fue exitosa.<br>
+                                    <a href="http://http.cat/301">301</a>: lo pedido se movió a otra url.<br>
+                                    <a href="http://http.cat/401">401</a>: te falta autenticarte.<br>
+                                    <a href="http://http.cat/403">403</a>: te faltan permisos.<br>
+                                    <a href="http://http.cat/404">404</a>: lo pedido no existe.<br>
+                                    <a href="http://http.cat/500">500</a>: el servidor tuvo un error procesando la petición.<br>
                                 </p>
-                                <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status">[ lista completa ]</a></p>
+                                <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status">[ lista completa ] <a href="http://http.cat">[ mejor lista ]</a></a></p>
+                                <p></p>
                             </div>
                             <div class="fragment fade-in-then-out">
                                 <p><strong><span style="color: #b103fc">2..N Headers</span> (cabeceras)</strong></p>
@@ -235,7 +237,52 @@
                         </div>
                     </div>
                 </section>
-			</div>
+
+                <section>
+                    <h3>5. Navegador muestra contenido</h3>
+                    <p>Qué hace el navegador con la respuesta?</p>
+                </section>
+
+                <section>
+                    <p>Normalmente, es un HTML o algún formato que el navegador entiende. Lo interpreta y muestra visualmente.</p>
+                    <p class="fragment">Peeeeero... en realidad es más complicado.</p>
+                    <p class="fragment">De qué está hecha una web normal? Solo un HTML?</p>
+                </section>
+
+                <section>
+                    <h3>Muchas requests y responses</h3>
+                    <div class="columns">
+                        <div>
+                            <pre><code class="hljs html" data-trim data-line-numbers>
+                                &lt;p&gt;
+                                    Noticia: nueva mascota!
+                                    &lt;img src="/foto1.png" /&gt;
+                                    &lt;img src="/foto2.png" /&gt;
+                                &lt;/p&gt;
+                            </code></pre>
+                        </div>
+                        <div style="font-size: 0.8em">
+                            <p class="fragment">La respuesta típica es un HTML con <strong>referencias</strong> a muchas otras cosas: imágenes, CSS, JS, etc.</p>
+                            <p class="fragment">...cada una de ellas requiere una nueva request!</p>
+                            <p class="fragment">En un sitio moderno? Decenas o cientos!</p>
+                        </div>
+                    </div>
+                </section>
+
+				<section>
+                    <p>Recordemos: qué hacía HTTP con la conexión luego de enviar la respuesta?</p>
+                    <p class="fragment">La cierra.<br>
+                        Cada request/response es una nueva conexión.<br>
+                        Esto es super costoso e ineficiente!
+                    </p>
+                </section>
+
+                <section>
+                    <img src="static/img/recycle.png" style="width: 20%" />
+                    <h3>HTTP 2.0</h3>
+                    <p class="fragment">Igual que HTTP, solo que permite <strong>reutilizar la conexión</strong> para múltiples request/responses.</p>
+                </section>
+            </div>
 		</div>
 
 		<script src="static/reveal_js/reveal.js"></script>
