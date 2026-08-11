@@ -541,6 +541,214 @@
                 </section>
 
                 <section>
+                    <h3>El problema que resuelve DNS</h3>
+                    <ul>
+                        <li class="fragment">Las conexiones se hacen a direcciones de red (IPs).</li>
+                        <li class="fragment">Pero el usuario no puede recordar direcciones de red, en vez, puede recordar "nombres" de sitios.</li>
+                        <li class="fragment">Solución: necesitamos una "libreta de direcciones" que mapee nombres a direcciones de red.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Esa "libreta" se usaría así:</p>
+                    <ol>
+                        <li class="fragment">Un programa requiere comunicarse con photos.google.com.ar.</li>
+                        <li class="fragment">El programa <strong>resuelve</strong> el dominio: esto es, traduce photos.google.com.ar a una dirección de red usando la libreta.</li>
+                        <li class="fragment">El programa inicia la comunicación con la computadora que se encuentre en la dirección de red obtenida.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <p>Simple! Construyámoslo en un ratito.</p>
+                    <p>(famosas últimas palabras)</p>
+                </section>
+
+                <section>
+                    <h3>Primer problema</h3>
+                    <p>Es imposible tener en nuestra pc la lista de direcciones de todos los dominios del mundo.</p>
+                    <p class="fragment">Cómo nos enteramos cuando Google cambia la dirección de un servidor?</p>
+                </section>
+
+                <section>
+                    <img src="static/img/server.png" style="width: 15%" />
+                    <h3>Servidores DNS</h3>
+                    <p>En vez: resolver es enviar una <strong>consulta de DNS</strong> a un Servidor de Nombres (o Servidor DNS).</p>
+                </section>
+
+                <section>
+                    <img src="static/img/dns_basic.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <p>Pero... en qué dirección están los Servidores DNS?</p>
+                    <p class="fragment">Suelen venir de la configuración de red (nos lo puede indicar el router por ejemplo), y solemos poder pisarlas a nivel de OS o programas que lo permitan.</p>
+                    <p class="fragment">Ej: 8.8.4.4 es un DNS público que ofrece Google.</p>
+                </section>
+
+                <section>
+                    <p>Si un programa hace 200 requests seguidas al mismo dominio, tiene sentido que haga 200 consultas de DNS?</p>
+                    <p class="fragment">❌<strong>Sería extremadamente ineficiente!</strong></p>
+                </section>
+
+                <section>
+                    <img src="static/img/recycle.png" style="width: 20%" />
+                    <h3>Ahorrando preguntas v1</h3>
+                    <p>Resolvedor de nombres del sistema operativo.</p>
+                </section>
+
+                <section>
+                    <p class="fragment">Los programas no consultan directamente al servidor DNS. En vez consultan al <strong>sistema operativo</strong>.</p>
+                    <p class="fragment">El OS tiene un servicio <strong>Resolvedor de DNS</strong> local.</p>
+                    <p class="fragment">Si no conoce la dirección, este servicio le habla al servidor externo.</p>
+                    <p class="fragment">✅ Y tiene <strong>caché</strong>! Recuerda las direcciones que le pidieron recientemente, evitando consultar al servidor cada vez.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/dns_local.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <h3>Ahorrando preguntas v2</h3>
+                    <p>Servidores DNS intermediarios.</p>
+                </section>
+
+                <section>
+                    <p>Normalmente no hablamos de forma directa con servidores DNS globales:</p>
+                    <p class="fragment">El proveedor de internet tienen sus propios servidores de DNS (con caché!). El super-proveedor que le da internet al proveedor, también! Y así sucesivamente.</p>
+                    <p class="fragment">Las consultas DNS van saltando de servidor en servidor hasta que alguno tenga la dirección en caché o lleguen al servidor "autoritativo" que conoce esa dirección.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/dns_hops.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <img src="static/img/authoritative.png" style="width: 20%" />
+                    <h3>Quién tiene la palabra final?</h3>
+                    <p class="fragment">El servidor DNS <strong>autoritativo</strong> es el que tiene la palabra final sobre la dirección de un dominio.</p>
+                </section>
+
+                <section>
+                    <p>Sabe la dirección con total seguridad porque el <strong>dueño del dominio</strong> configuró ahí la dirección de red a la que apuntar.</p>
+                    <p class="fragment">Los demás servidores pueden conocer la dirección por haberla preguntado, pero son solo intermediarios con caché.</p>
+                </section>
+
+                <section>
+                    <p>Hablando de caché...</p>
+                </section>
+
+                <section>
+                    <img src="static/img/cache.png" style="width: 20%" />
+                    <h3>Problemas de caché</h3>
+                    <p>Qué problemas puede haber por tener todos estos intermediarios con caché?</p>
+                </section>
+
+                <section>
+                    <p>Qué pasa si tienen cacheada una dirección, y esa dirección cambia en el servidor autoritativo?</p>
+                    <p class="fragment">❌Hasta que esas cachés no se venzan, van a resolver incorrectamente la dirección!</p>
+                    <p class="fragment">Es un problema. Solemos evitar cachear por mucho tiempo, y solemos evitar cambiar direcciones muy seguido.</p>
+                </section>
+
+                <section>
+                    <h3>Más complicaciones</h3>
+                    <p>Sería imposible tener un único servidor global autoritativo.</p>
+                    <p>Pero entonces para un dominio puntual... a cuál autoritativo le preguntamos?</p>
+                </section>
+
+                <section>
+                    <p>Existe una <strong>jerarquía de servidores de dominios</strong>.</p>
+                    <p class="fragment">Hay servidores top level: uno para cada terminación posible: ".com", ".org", ".net", ".ar", ".us", etc.</p>
+                    <p class="fragment">Servidores ROOT nos saben redirigir al top level que corresponda.</p>
+                    <p class="fragment">Algunos top levels son administrados por países: ".ar" es administrado el gobierno de Argentina (NIC.AR).</p>
+                </section>
+
+                <section>
+                    <p>Por ejemplo, para resolver elecciones.ar:</p>
+                    <ol>
+                        <li class="fragment">Le preguntamos a un ROOT. ROOT nos dice "preguntale a AR, que está en x.x.x.x".</li>
+                        <li class="fragment">Le preguntamos a AR. AR nos responde "elecciones.ar está en y.y.y.y"</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <img src="static/img/tree.png" style="width: 20%" />
+                    <h3>Más niveles!</h3>
+                    <p>Un pasamanos infinito.</p>
+                </section>
+
+                <section>
+                    <p>El servidor de NIC.AR seguro no conoce dónde están todos los ".ar": probablemente tiene un servidor que sabe de ".com.ar" y otro diferente para ".gob.ar".</p>
+                    <p class="fragment">En ese caso si le preguntamos por elecciones.gob.ar, pasaría lo siguiente:</p>
+                </section>
+
+                <section>
+                    <ol>
+                        <li class="fragment">Le preguntamos a ROOT. ROOT nos dice "preguntale a AR, que está en x.x.x.x".</li>
+                        <li class="fragment">Le preguntamos a AR. AR nos responde "preguntale a GOB.AR, que está en y.y.y.y".</li>
+                        <li class="fragment">Le preguntamos a GOB.AR. Este finalmente nos responde con la dirección de elecciones.gob.ar.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h3>Y máááás niveles!</h3>
+                    <p>I'm tired boss...</p>
+                </section>
+
+                <section>
+                    <p>Incluso es posible que personas y empresas tengan sus propios servidores de DNS, para responder a subdominios propios!</p>
+                    <p class="fragment">Por ejemplo, Google tiene su propio DNS para responder a todas las consultas del estilo "ALGO.google.com.ar"</p>
+                    <p class="fragment">Si queremos resolver mail.google.com.ar...</p>
+                </section>
+
+                <section>
+                    <ol>
+                        <li class="fragment">Le preguntamos a ROOT. ROOT nos dice "preguntale a AR, que está en x.x.x.x".</li>
+                        <li class="fragment">Le preguntamos a AR, nos responde "preguntale a COM.AR, que está en y.y.y.y".</li>
+                        <li class="fragment">Le preguntamos a COM.AR, nos responde con "preguntale a GOOGLE.COM.AR, que está en z.z.z.z".</li>
+                        <li class="fragment">Le preguntamos a GOOGLE.COM.AR, y este finalmente nos sabe responder dónde está mail.google.com.ar.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <img src="static/img/dns_wiki_tree.png" style="width: 100%" />
+                    <p class="fragment">Cada nodo es autoritativo de *.su-dominio</p>
+                </section>
+
+                <section>
+                    <p>Y a todo esto, no se olvidaron de los intermediarios con caché, no?</p>
+                </section>
+
+                <section>
+                    <img src="static/img/dns_full.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <img src="static/img/secure.png" style="width: 20%" />
+                    <h3>DNS es seguro?</h3>
+                    <p class="fragment">Mas o menos...</p>
+                </section>
+
+                <section>
+                    <h3>DNS y privacidad (1)</h3>
+                    <p>❌ Resolvers y servidores DNS intermedios pueden saber qué dominios estamos intentando resolver.</p>
+                    <p class="fragment">✅ <strong>Solución</strong>: si no confiamos en alguno (ej: proveedor de internet) podemos configurar la computadora para ir directamente a un DNS más confiable (OpenDNS, Google, etc).</p>
+                </section>
+
+                <section>
+                    <h3>DNS y privacidad (2)</h3>
+                    <p>❌ El servidor de DNS que elijamos igualmente va a saber a qué dominios estamos accediendo.</p>
+                    <p class="fragment"> 🤷‍♂️ No hay una solución para esto, pero eligiendo un ROOT confiable podemos mitigar un poco el problema.</p>
+                </section>
+
+                <section>
+                    <h3>DNS y privacidad (3)</h3>
+                    <p>😱 Las consultas de DNS viajan encriptadas? Si no lo hacen, todo intermediario en la red va a poder ver qué dominios estamos intentando resolver, sin importar que DNS usemos!</p>
+                    <p class="fragment">✅ <strong>Solución</strong>: los navegadores actuales ya hacen "DNS over HTTPS", que encripta la conexión.</p>
+                    <p class="fragment">...pero solo si el DNS que usemos lo soporta! Ej: Fibertel no.</p>
+                    <p class="fragment">✅ <strong>Solución</strong>: configurar un DNS que soporte DNS over HTTPS (Google, OpenDNS).</p>
+                </section>
+
+                <section>
                     <h2>Preguntas?</h2>
                 </section>
             </div>
