@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+
+		<title>TAP | Texto y búsqueda</title>
+
+		<link rel="stylesheet" href="static/reveal_js/reset.css" />
+		<link rel="stylesheet" href="static/reveal_js/reveal.css" />
+        <link rel="stylesheet" href="static/reveal_js/theme/night.css" />
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="static/reveal_js/plugin/highlight/monokai.css" />
+        <!-- My style overrides -->
+		<link rel="stylesheet" href="static/my_styles.css" />
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+                    <h2>Texto y búsqueda</h2>
+                    <p>Tópicos Avanzados de Programación</p>
+                </section>
+
+				<section>
+                    <img src="static/img/rectangle.png" style="width: 10%" />
+                    <h2>I � unicode</h2>
+                    <p>Qué es un encoding? Qué es unicode?</p>
+                </section>
+
+				<section>
+                    <p class="fragment">No existe "un" estándar de "texto plano". Nunca veríamos caracteres rotos.</p>
+                    <p class="fragment">Caracteres rotos 🠖 "problema de encodings!"</p>
+                    <p class="fragment">...y qué es un encoding? 🠖 🤷</p>
+                    <p class="fragment">Mucha desinformación y mitos, incluso en tutoriales y videos!</p>
+                </section>
+
+				<section>
+                    <img src="static/img/history.png" style="width: 10%" />
+                    <h3>El inicio</h3>
+                    <p class="fragment">Nosotros sabemos de <span style="color: magenta">caracteres</span>, las computadoras saben de <span style="color: #b0ed2b">bytes</span>.</p>
+                    <p class="fragment">Hubo que definir cómo representar <span style="color: magenta">caracteres</span> en <span style="color: #b0ed2b">bytes</span>.</p>
+                    <p class="fragment">Alguien dijo: que la <span style="color: magenta">'A'</span> sea <span style="color: #b0ed2b">01000001</span>, la <span style="color: magenta">'B'</span> sea...</p>
+                </section>
+
+				<section>
+                    <img src="static/img/babel.png" style="width: 10%" />
+                    <h3>El problema</h3>
+                    <ul>
+                        <li class="fragment">Distintas personas/sistemas eligieron distintos bytes para los mismos caracteres!</li>
+                        <li class="fragment">Distintas personas/sistemas eligieron distintos conjuntos de caracteres! (alfabetos, símbolos especiales, etc)</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <p>Nacieron los muchos <strong>Encodings</strong>:
+                        <span class="fragment">estándares de representación de <span style="color: magenta">caracteres</span> en <span style="color: #b0ed2b">bytes</span>.</span>
+                    </p>
+                </section>
+
+				<section>
+                    <p>Ej: ASCII encoding</p>
+                    <div class="r-stack">
+                        <img src="static/img/ascii.png" style="width: 80%" class="fragment fade-in-then-out"/>
+                        <img src="static/img/ascii_zoom.png" style="width: 100%" class="fragment fade-in-then-out"/>
+                    </div>
+                </section>
+
+				<section>
+                    <h3>Qué problemas tiene ASCII?</h3>
+                    <p class="fragment">❌ Conjunto de caracteres muy limitado!</p>
+                    <p class="fragment">❌ Largo fijo de bytes: nunca vamos a poder agregar más caracteres.</p>
+                    <p class="fragment">✅ Solución: usar otros encodings mejores.</p>
+                </section>
+
+				<section>
+                    <div class="columns">
+                        <div>
+                            <img src="static/img/babel.png" style="width: 40%" />
+                        </div>
+                        <div>
+                            <p>...pero cuál?</p>
+                            <p class="fragment">CP-1251, CP-1252, ISO-8859-1, GB-2312, Shift-JIS, UTF-8, UTF-16...?</p>
+                        </div>
+                    </div>
+                </section>
+
+				<section>
+                    <img src="static/img/rectangle.png" style="width: 10%" />
+                    <h3>Qué es Unicode?</h3>
+                    <p class="fragment">Unicode es un encoding...</p>
+                </section>
+
+                <section style="font-size: 15em; color: #fc035e">
+                    <p>NO</p>
+                </section>
+
+				<section>
+                    <img src="static/img/rectangle.png" style="width: 10%" />
+                    <h3>Qué es Unicode?</h3>
+                    <p class="fragment">Un estándar que define la lista de <span style="color: magenta">caracteres humanos</span>: con id, nombre, dibujito, reglas de mayúscula/minúscula, y más data de cada uno.</p>
+                    <p class="fragment"><strong>NO ES UN ENCODING!</strong></p>
+                </section>
+
+				<section>
+                    <h3>Ejemplos</h3>
+                    <p><a href="https://www.compart.com/en/unicode/U+0041">[ A ]</a></p>
+                    <p><a href="https://www.compart.com/en/unicode/U+03C0">[ π ]</a></p>
+                </section>
+
+				<section>
+                    <p>Unicode NO dice cómo representar cada caracter en bytes, no es un encoding.</p>
+                    <p class="fragment">El id NO es eso! es solo un id en la lista de caracteres.</p>
+                    <p class="fragment">Pero ahora todos los encodings se definen en base a Unicode!</p>
+                </section>
+
+				<section>
+                    <img src="static/img/encoding.png" style="width: 15%" />
+                    <h3>Redefinimos Encoding:</h3>
+                    <p class="fragment">Algo que nos dice cómo representar en <span style="color: #b0ed2b">bytes</span> cada <span style="color: magenta">caracter</span> de Unicode.</p>
+                    <p class="fragment">Ej: con encoding ASCII el caracter <span style="color: magenta">U+0041</span> de Unicode (la <span style="color: magenta">letra 'A'</span>) se representa con los bytes <span style="color: #b0ed2b">01000001</span>.</p>
+                </section>
+
+				<section>
+                    <p class="fragment">Unicode ya tiene más de un millón de caracteres, encodings viejos cubren solo una pequeña parte (ej: ASCII no tiene π).</p>
+                    <p class="fragment">El mismo grupo que mantiene Unicode, creó encodings mucho mejores! UTF-8/16/32</p>
+                    <p class="fragment">Los encodings UTF cubren <strong>todo</strong> Unicode, por más que se vaya actualizando (no se van a acabar los números porque usan largo variable).</p>
+                </section>
+
+				<section>
+                    <img src="static/img/code.png" style="width: 10%" />
+                    <h3>Encodings al programar</h3>
+                </section>
+
+				<section>
+                    <p class="fragment">En lenguajes modernos un <span style="color: magenta">"texto"</span> (string) es una cadena de caracteres unicode.</p>
+                    <p class="fragment">Pero al guardar a disco, base de datos, mandar por red, etc, tenemos que convertirlos a <span style="color: #b0ed2b">bytes</span>.</p>
+                    <p class="fragment">Todas las operaciones de texto (largo, combinar, pasar a mayúscula, etc) deberían ser <strong>sobre strings, no sobre bytes</strong>.</p>
+                </section>
+
+				<section>
+                    <p class="fragment"><strong>"Encodeamos"/codificamos</strong>: <span style="color: magenta">'A'</span> 🠖 <span style="color: #b0ed2b">01000001</span><br>
+                        Tomamos caracteres unicodes (texto) y los convertimos a bytes.</p>
+                    <p class="fragment"><strong>Decodificamos</strong>: <span style="color: #b0ed2b">01000001</span> 🠖 <span style="color: magenta">'A'</span><br>
+                        Tomamos bytes y los convertimos a una secuencia de caracteres unicode (texto).</p>
+                </section>
+
+				<section>
+                    <p>...salvo algunos lenguajes viejos/malos donde la división no es clara, generando muchos problemas de todo tipo (lenguajes que solo manejan bytes encodeados y no entienden de Unicode, lenguajes que solo soportan un encoding, etc).</p>
+                </section>
+
+				<section>
+                    <h3>Idealmente</h3>
+                    <ol>
+                        <li class="fragment">Leemos/recibimos <span style="color: #b0ed2b">bytes</span>, los <strong>decodificamos</strong> usando el encoding que corresponda, y nos quedamos con <span style="color: magenta">texto</span> (strings unicode).</li>
+                        <li class="fragment">Trabajamos en variables con el <span style="color: magenta">texto</span> (modificamos, combinamos, etc).</li>
+                        <li class="fragment"><strong>Encodeamos</strong> a <span style="color: #b0ed2b">bytes</span> al momento de guardarlos/enviarlos.</li>
+                    </ol>
+                </section>
+
+				<section>
+                    <p>A veces sucede automáticamente:</p>
+                    <ul>
+                        <li class="fragment">Los lenguajes saben decodificar/encodear automáticamente al leer o escribir archivos.</li>
+                        <li class="fragment">Los ORMs saben decodificar/encodear automáticamente al leer o escribir contra la base de datos.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h3>Qué encoding usamos?</h3>
+                    <p class="fragment">Idealmente UTF-8 en todo lo que podamos.</p>
+                    <ul>
+                        <li class="fragment">Archivos que leemos o escribimos a disco.</li>
+                        <li class="fragment">Base de datos.</li>
+                        <li class="fragment">HTML que entregamos en una response HTTP.</li>
+                        <li class="fragment">Las requests y responses HTTP mismas.</li>
+                        <li class="fragment">Archivos de código (son archivos de texto!).</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <p>Pero no siempre controlamos nosotros el encoding:</p>
+                    <ul>
+                        <li class="fragment">Archivos que nos generan otros sistemas.</li>
+                        <li class="fragment">Base de datos que no controlamos.</li>
+                        <li class="fragment">Responses de APIs web de terceros.</li>
+                    </ul>
+                    <p class="fragment">Qué encoding usamos para leer sus datos? <span class="fragment">El mismo que los terceros usaron para encodear!</span></p>
+                    <p class="fragment">Qué encoding usamos para mandarles datos? <span class="fragment">El que los terceros esperan!</span></p>
+                </section>
+
+                <section>
+                    <img src="static/img/play.png" style="width: 20%" />
+                    <h3>Demo</h3>
+                    <p>Encodeemos, decodifiquemos, adivinemos, etc.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/problem.png" style="width: 15%" />
+                    <h3>Problemas comunes</h3>
+                </section>
+
+                <section>
+                    <p>❌ <strong>Problema</strong>: no sabemos qué encoding tiene datos de un tercero.</p>
+                    <p class="fragment">✅ <strong>Solución</strong>: que nos digan! (docs, escribirles, etc).</p>
+                    <p class="fragment">
+                        - Che, en qué encoding está el archivo?<br>
+                        - Está en unicode<br>
+                        - O...K...<br>
+                    </p>
+                    <p class="fragment">✅ También hay libs para adivinar, no 100% precisas.</p>
+                </section>
+
+                <section>
+                    <p>❌ <strong>Problema</strong>: nos dijeron que los datos vienen en un encoding, pero usando ese encoding falla o vemos caracteres raros.</p>
+                    <p class="fragment">✅ <strong>Solución</strong>: pedir que lo arreglen, o intentar adivinar cuál es el encoding que realmente están usando y usar ese en vez.</p>
+                </section>
+
+                <section>
+                    <p>❌ <strong>Problema</strong>: al leer/escribir de la base de datos o de un archivo, vemos caracteres extraños.</p>
+                    <p class="fragment">✅ <strong>Solución</strong>: seguro estamos leyendo o escribiendo con el encoding incorrecto (ej: la base de datos habla en CP-1252 y nosotros decodificamos los resultados de la query usando UTF-8). Usar el encoding configurado en la DB.</p>
+                </section>
+
+                <section>
+                    <p>❌ <strong>Problema</strong>: al acceder a nuestra web se ven caracteres extraños.</p>
+                    <p class="fragment">✅ <strong>Solución</strong>: o no estamos especificando el encoding del html, o sí pero luego lo generamos con otro encoding. Usar el encoding correcto y especificarlo en el html:</p>
+                    <pre class="fragment"><code class="hljs html" data-trim data-line-numbers>
+                        &lt;!DOCTYPE html&gt;
+                        &lt;html lang="en"&gt;
+                        &lt;head&gt;
+                            &lt;meta charset="utf-8"/&gt;
+                        ...
+                    </code></pre>
+                </section>
+
+				<section>
+                    <img src="static/img/search.png" style="width: 40%" />
+                    <h2>Búsqueda de texto</h2>
+                </section>
+
+				<section>
+                    <div class="columns">
+                        <div>
+                            <h3>Búsqueda interna</h3>
+                            <p>Cómo implementamos un motor de búsqueda en nuestra app?</p>
+                        </div>
+                        <div>
+                            <h3>Búsqueda externa</h3>
+                            <p>Cómo aparecemos en los resultados de Google?</p>
+                        </div>
+                    </div>
+                </section>
+
+				<section>
+                    <h3>Búsqueda de texto interna: por qué?</h3>
+                    <p class="fragment">Los usuarios esperan poder buscar.</p>
+                    <p class="fragment">Es la forma más intuitiva de acceder a contenido.</p>
+                </section>
+
+				<section>
+                    <h3>Cómo lo resolverían?</h3>
+                    <p>Ej: tenemos una base de datos de productos para runners, y los usuarios quieren poder buscar.</p>
+                    <p>Qué hacemos?</p>
+                </section>
+
+				<section>
+                    <img src="static/img/sql.png" style="width: 10%" />
+                    <h3>Buscando con SQL</h3>
+                    <div class="r-stack">
+                        <pre class="fragment fade-in-then-out"><code class="hljs sql" data-trim data-line-numbers>
+                        SELECT * FROM productos 
+                        WHERE descripcion ...?
+                        </code></pre>
+                        <pre class="fragment fade-in-then-out"><code class="hljs sql" data-trim data-line-numbers>
+                        SELECT * FROM productos 
+                        WHERE descripcion LIKE '%zapatillas%'
+                        </code></pre>
+                        <pre class="fragment fade-in-then-out"><code class="hljs sql" data-trim data-line-numbers>
+                        SELECT * FROM productos 
+                        WHERE descripcion LIKE '%zapatillas para correr maratón%'
+                        </code></pre>
+                        <pre class="fragment fade-in-then-out"><code class="hljs sql" data-trim data-line-numbers>
+                        SELECT * FROM productos 
+                        WHERE descripcion LIKE '%zapatillas%' 
+                        AND descripcion LIKE '%para%'
+                        AND descripcion LIKE '%correr%'
+                        AND descripcion LIKE '%maratón%'
+                        </code></pre>
+                        <pre class="fragment fade-in-then-out"><code class="hljs sql" data-trim data-line-numbers>
+                        SELECT * FROM productos 
+                        WHERE descripcion LIKE '%zapatillas%'
+                        OR descripcion LIKE '%para%'
+                        OR descripcion LIKE '%correr%'
+                        OR descripcion LIKE '%maratón%'
+                        </code></pre>
+                        <p class="fragment fade-in-then-out">...y cómo <strong>ordenamos</strong> los resultados para que queden primeros los más <strong>relevantes</strong>?</p>
+                        <p class="fragment fade-in-then-out">...qué tan rápidas van a ser esas queries? Ayudaría si usamos índices?</p>
+                    </div>
+                </section>
+
+				<section>
+                    <img src="static/img/sql.png" style="width: 10%" />
+                    <p>❌ SQL no está pensado para búsquedas de texto completo, es una muy mala herramienta para ello.</p>
+                </section>
+
+				<section>
+                    <img src="static/img/sql.png" style="width: 10%" />
+                    <p>❌ Problemas de <strong>calidad de resultados</strong>:</p>
+                    <ul>
+                        <li class="fragment">Frase completa? Demasiado estricto.</li>
+                        <li class="fragment">Palabras separadas? Con ANDs demasiado estricto, ORs demasiado abierto.</li>
+                        <li class="fragment">Palabras similares no son consideradas.</li>
+                        <li class="fragment">No podemos rankear por relevancia.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <img src="static/img/sql.png" style="width: 10%" />
+                    <p>❌ Problemas de <strong>performance</strong>:</p>
+                    <ul>
+                        <li class="fragment">Las queries con "LIKE %algo%" generan table scans! Los índices por campo no sirven.</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <p>Y entonces? Qué hacemos? Los datos están en la base de datos y hay que buscar...</p>
+                    <p class="fragment">Usamos un <strong>motor de búsqueda de texto</strong>!</p>
+                </section>
+
+				<section>
+                    <img src="static/img/text_search.png" style="width: 20%" />
+                    <h3>Motores de búsqueda de texto completo</h3>
+                </section>
+	
+				<section>
+                    <p>Leamos todas las descripciones y construyamos un índice de búsqueda de texto:</p>
+                    <table class="fragment">
+                        <tr>
+                            <th>Palabra</th>
+                            <th>Documentos que la contienen</th>
+                        </tr>
+                        <tr>
+                            <td>zapatillas</td>
+                            <td>1, 2, 4</td>
+                        </tr>
+                        <tr>
+                            <td>correr</td>
+                            <td>1, 2, 3, 4, 5</td>
+                        </tr>
+                        <tr>
+                            <td>maratón</td>
+                            <td>2, 3</td>
+                        </tr>
+                    </table>
+                    <p class="fragment">Y lo hacemos ignorando <strong>stopwords</strong>!: "para", "la", "de", "un"...</p>
+                </section>
+
+				<section>
+                    <p>La columna "Palabra" se puede <strong>indexar</strong>!<br>(no filtramos más por "LIKE", sino por "=").</pr>
+                    <p>Ir a una palabra es super rápido.</p>
+                </section>
+
+				<section>
+                    <h3>Cómo lo usamos?</h3>
+                    <p class="fragment">Cuando el usuario busque "zapatillas para correr":</p>
+                    <ol>
+                        <li class="fragment">Separamos palabras y descartamos stopwords: "zapatillas", "correr".</li>
+                        <li class="fragment">Buscamos cada palabra en el índice.</li>
+                        <li class="fragment">Obtenemos los documentos que las contienen.</li>
+                        <li class="fragment">Los rankeamos según cuántas palabras tenían.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h3>Pero todavía tiene problemas</h3>
+                    <p class="fragment">Qué pasa si busco "zapatillas" y hay un producto que dice "zapatilla"?</p>
+                    <p class="fragment">Da lo mismo que contenga "zapatillas" vs que contenga "correr"? (era un sitio de runners)</p>
+                </section>
+
+                <section>
+                    <h3>Stemming</h3>
+                    <p class="fragment">En vez de indexar palabras, indexamos <strong>raíces de palabras</strong>.</p>
+                    <table class="fragment">
+                        <tr>
+                            <th>Raíz</th>
+                            <th>Documentos que la contienen</th>
+                        </tr>
+                        <tr>
+                            <td>zapatill</td>
+                            <td>1, 2, 4</td>
+                        </tr>
+                        <tr>
+                            <td>corr</td>
+                            <td>1, 2, 3, 4, 5</td>
+                        </tr>
+                        <tr>
+                            <td>maratón</td>
+                            <td>2, 3</td>
+                        </tr>
+                    </table>
+                    <p class="fragment">Ganamos cobertura, perdemos un poco de precisión.</p>
+                </section>
+
+                <section>
+                    <h3>Term frequency</h3>
+                    <p class="fragment">No da lo mismo que un resultado contenta una palabra que es <strong>rara</strong>, vs que contenga una palabra que es muy <strong>común</strong> en nuestros datos.</p>
+                    <p class="fragment">De cada palabra vamos a guardar:</p>
+                    <ul>
+                        <li class="fragment">Cuánto aparece en cada documento.</li>
+                        <li class="fragment">Qué tan rara es en nuestro conjunto entero de documentos (0 = nada rara, super común).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <table>
+                        <tr>
+                            <th>Raíz</th>
+                            <th>Documentos que la contienen</th>
+                        </tr>
+                        <tr>
+                            <td>zapatill (0.5)</td>
+                            <td>1 (0.2), 2 (0.9), 4 (0.3)</td>
+                        </tr>
+                        <tr>
+                            <td>corr (0.01)</td>
+                            <td>1 (0.8), 2 (0.9), 3 (0.5), 4 (0.3), 5 (0.7)</td>
+                        </tr>
+                        <tr>
+                            <td>maratón (0.9)</td>
+                            <td>2 (0.9), 3 (0.1)</td>
+                        </tr>
+                    </table>
+                    <p class="fragment">Al rankear resultados, <strong>podemos "pesarlos" en base a esos dos números</strong>.</p>
+                </section>
+
+				<section>
+                    <img src="static/img/text_search.png" style="width: 10%" />
+                    <h3>Combinando todo</h3>
+                    <p class="fragment">Cuando el usuario busque "zapatillas para correr":</p>
+                    <ol>
+                        <li class="fragment">Separamos palabras, descartamos stopwords y obtenemos raíces: "zapatill", "corr".</li>
+                        <li class="fragment">Buscamos cada raíz en el índice.</li>
+                        <li class="fragment">Obtenemos los documentos que las contienen, con sus frecuencias y rarezas.</li>
+                        <li class="fragment">Los rankeamos dándoles peso por cantidad de raíces que contienen, y sus frecuencias y rarezas.</li>
+                    </ol>
+                </section>
+	
+                <section>
+                    <h3>Hay que mantener el índice</h3>
+                    <p class="fragment">Si la base de datos cambia, hay que actualizar el índice.</p>
+                    <p class="fragment">En tiempo real? cada X tiempo?</p>
+                    <p class="fragment">Depende!</p>
+                </section>
+
+                <section>
+                    <h3>Hay que saber stopwords y raíces de palabras</h3>
+                    <p class="fragment">Esto depende de cada lenguaje.</p>
+                    <p class="fragment">...entonces también hay que saber el lenguaje del contenido.</p>
+                    <p class="fragment">Hay motores mejores y peores en este sentido.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/sql.png" style="width: 10%" />
+                    <h3>Es mejor que SQL?</h3>
+                    <p class="fragment"><strong>Calidad?</strong></p>
+                    <p class="fragment">✅ Sí! Obtenemos resultados relevantes y bien rankeados.</p>
+                    <p class="fragment"><strong>Performance?</strong></p>
+                    <p class="fragment">✅ Sí! Buscar la raíz en el índice es super rápido.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/text_search.png" style="width: 10%" />
+                    <h3>Motores conocidos</h3>
+                    <ul>
+                        <li class="fragment">ElasticSearch, Apache Lucene, OpenSearch, Apache Solr: se instalan como servidor, y te dan API para actualizar el índice y consultarlo.</li>
+                        <li class="fragment">PostgreSQL, MySQL, MS SQL, Oracle, MongoDB: tienen motores propios metidos dentro de la DB misma, con sintaxis custom para usarlos (no LIKE!).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Preguntas?</h2>
+                </section>
+            </div>
+		</div>
+
+		<script src="static/reveal_js/reveal.js"></script>
+		<script src="static/reveal_js/plugin/notes.js"></script>
+		<script src="static/reveal_js/plugin/markdown.js"></script>
+		<script src="static/reveal_js/plugin/highlight.js"></script>
+		<script src="static/init_slides.js"></script>
+	</body>
+</html>
