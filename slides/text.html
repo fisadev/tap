@@ -481,6 +481,95 @@
                     </ul>
                 </section>
 
+				<section>
+                    <div class="columns">
+                        <div>
+                            <h3>Búsqueda interna</h3>
+                            <p>Cómo implementamos un motor de búsqueda en nuestra app?</p>
+                        </div>
+                        <div>
+                            <h3>Búsqueda externa</h3>
+                            <p>Cómo aparecemos en los resultados de Google?</p>
+                        </div>
+                    </div>
+                </section>
+
+				<section>
+                    <h3>Búsqueda de texto externa: por qué?</h3>
+                    <p class="fragment">Si más gente encuentra nuestro sitio, más gente entra.</p>
+                </section>
+
+				<section>
+                    <img src="static/img/spider.png" style="width: 20%" />
+                    <h3>Cómo funcionan los motores de búsqueda externos?</h3>
+                </section>
+
+				<section>
+                    <img src="static/img/google_index.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <img src="static/img/spider.png" style="width: 10%" />
+                    <ol>
+                        <li class="fragment">Las arañas recorren la web siguiendo los links, indexando lo que ven. Constantemente.</li>
+                        <li class="fragment">Lo que obtienen las arañas es almacenado en un índice gigante.</li>
+                        <li class="fragment">Cuando el usuario pide buscar algo, se busca en ese índice.</li>
+                        <li class="fragment">Y se rankean los resultados!</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <p>Es muy similar a nuestros motores internos! Pero:</p>
+                    <ul>
+                        <li class="fragment">El contenido a indexar son webs con todo lo que muestran, no filas de una DB.</li>
+                        <li class="fragment">La escala es monstruosa.</li>
+                        <li class="fragment">El rankeo tiene en cuenta mucho más que solo el texto (si otros sitios te linkean mucho, si tu web es rápida, ubicación e idioma, accesibilidad, etc).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Cómo nos encuentran las arañas por <strong>primera vez</strong>?</p>
+                    <ul>
+                        <li class="fragment">Si otro sitio nos linkea.</li>
+                        <li class="fragment">O nos podemos dar de alta a mano.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>⬆ Cómo hacemos para aparecer <strong>más arriba</strong> en los resultados?</p>
+                    <p class="fragment">SEO: Search Engine Optimization.</p>
+                    <ul>
+                        <li class="fragment">👼 <strong>White Hat SEO</strong>: seguir las recomendaciones oficiales, hacer sitios útiles y bien hechos, ser famosos, etc.
+                            <a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide">[ Google SEO Starter Guide ]</a></li>
+                        <li class="fragment">👿 <strong>Black Hat SO</strong>: abusar la lógica del algoritmo de rankeo para artificialmente aparecer más arriba. Si te descubren, te penalizan!</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/spider.png" style="width: 20%" />
+                    <h3>Hablando con arañas</h3>
+                    <p class="fragment">Tenemos un poco de control de qué indexan las arañas y cómo: <strong>robots.txt</strong></p>
+                </section>
+
+                <section>
+                    <ul>
+                        <li class="fragment">Response de la URL misitio.com<span style="color: lightgreen">/robots.txt</span> (no necesariamente un "archivo").</li>
+                        <li class="fragment">Con un formato estandarizado.</li>
+                        <li class="fragment">Podemos indicar qué URLs no indexar, qué URLs recomendamos sí indexar, diferentes permisos a diferentes buscadores, etc.</li>
+                        <li class="fragment">Pero no tenemos forma de garantizar que lo cumplan!</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Ejemplo de robots.txt</h3>
+                    <pre class="fragment"><code class="hljs" data-trim data-line-numbers>
+                        User-agent: *
+                        Disallow: /admin/
+                        Disallow: /private/
+                        Allow: /public/
+                    </code></pre>
+                </section>
+
                 <section>
                     <h2>Preguntas?</h2>
                 </section>
