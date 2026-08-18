@@ -44,40 +44,40 @@ Pegar el contenido de `datos.sql`: 12 productos de un e-commerce de running.
 Para buscar tenemos que procesar el texto que el usuario ingrese usando `websearch_to_tsquery`: 
 esta función se encarga de separar en palabras, extraer las raíces, quitar stopwords, etc.
 
-### "zapatillas para correr"
+### "maratón"
+
+Si intentamos usar ILIKE para la búsqueda:
 
 ```sql
 SELECT id, nombre FROM productos
-WHERE texto_indexado @@ websearch_to_tsquery('spanish', 'zapatillas para correr');
+WHERE nombre ILIKE '%maratón%' OR descripcion ILIKE '%maratón%';
 ```
 
-Trae las 5 zapatillas. El "para" se ignoro solo, y encontro tambien las que
-dicen "corren" o "corriendo" en vez de "correr".
+Nos trae solo 2 resultados. Otros 3 productos con "maratones" o "maratonista" son ignorados.
 
-### "correr"
+Pero en cambio, usando el motor de búsqueda de texto completo:
 
 ```sql
 SELECT id, nombre FROM productos
-WHERE texto_indexado @@ websearch_to_tsquery('spanish', 'correr');
+WHERE texto_indexado @@ websearch_to_tsquery('spanish', 'maratón');
 ```
 
-Trae 10 de los 12 productos: en una tienda de running, buscar "correr" no
-sirve para nada.
+Nos trae 5 productos, todos relevantes.
 
-Además: encontró resultados con palabras como "corren" o "corriendo". 
-Si usamos LIKEs en vez, obtenemos menos resultados:
+### "zapatillas para correr maratones"
 
 ```sql
 SELECT id, nombre FROM productos
-WHERE nombre ILIKE '%correr%' OR descripcion ILIKE '%correr%';
+WHERE texto_indexado @@ websearch_to_tsquery('spanish', 'zapatillas para correr maratones');
 ```
 
-### "zapatillas"
+Trae las 2 zapatillas maratonistas. 
+El "para" se ignoró por ser stopword, y el "correr" está siendo ignorado también porque en 
+nuestra db no aporta nada de información (casi todo es para correr).
+
+Si buscamos solo zapatillas maratonistas, vemos lo mismo:
 
 ```sql
 SELECT id, nombre FROM productos
-WHERE texto_indexado @@ websearch_to_tsquery('spanish', 'zapatillas');
+WHERE texto_indexado @@ websearch_to_tsquery('spanish', 'zapatillas maratonistas');
 ```
-
-Las mismas 5 zapatillas que en la primera busqueda: el "correr" no estaba
-aportando ninguna informacion.

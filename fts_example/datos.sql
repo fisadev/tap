@@ -16,7 +16,7 @@ INSERT INTO productos (nombre, descripcion, precio) VALUES
  265000),
 
 ('Zapatillas Hoka Clifton 9',
- 'Zapatilla muy amortiguada para entrenar corriendo todos los dias.',
+ 'Zapatilla muy amortiguada para entrenar corriendo, la preferida de los maratonistas.',
  298000),
 
 ('Zapatos de clavos Nike Rival Sprint',
@@ -32,15 +32,15 @@ INSERT INTO productos (nombre, descripcion, precio) VALUES
  38000),
 
 ('Medias de compresion Compressport',
- 'Medias que mejoran la circulacion al correr y aceleran la recuperacion.',
+ 'Medias que mejoran la circulacion al correr y aceleran la recuperacion despues de una maratón.',
  29000),
 
 ('Reloj GPS Garmin Forerunner 265',
- 'Reloj con GPS que mide el ritmo y la distancia mientras corres.',
+ 'Reloj con GPS que mide el ritmo mientras corres y arma tu plan para la media maratón.',
  890000),
 
 ('Cinturon de hidratacion con caramanolas',
- 'Cinturon comodo para recorrer largas distancias sin parar a tomar agua.',
+ 'Cinturon comodo para recorrer largas distancias, imprescindible para todo maratonista.',
  52000),
 
 ('Gorra tecnica con visera',
