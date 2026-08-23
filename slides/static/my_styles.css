@@ -22,3 +22,10 @@
 	width: 100%;
 	margin: 0;
 }
+
+/* images with configurable height without being deformed */
+.reveal .fit-height {
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+}

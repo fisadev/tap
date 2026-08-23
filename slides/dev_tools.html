@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+
+        <title>TAP | Herramientas de Desarrollo</title>
+
+        <link rel="stylesheet" href="static/reveal_js/reset.css" />
+        <link rel="stylesheet" href="static/reveal_js/reveal.css" />
+        <link rel="stylesheet" href="static/reveal_js/theme/night.css" />
+
+        <!-- Theme used for syntax highlighted code -->
+        <link rel="stylesheet" href="static/reveal_js/plugin/highlight/monokai.css" />
+        <!-- My style overrides -->
+        <link rel="stylesheet" href="static/my_styles.css" />
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h2>Herramientas de Desarrollo Modernas</h2>
+                    <p>Tópicos Avanzados de Programación</p>
+                </section>
+
+                <section>
+                    <img src="static/img/git.png" style="width: 20%" />
+                    <h2>Entendiendo Git</h2>
+                    <p>(finalmente)</p>
+                </section>
+
+                <section>
+                    <p>Todos usamos git, y mucho.</p>
+                    <p class="fragment">Quién tuvo problemas con Git alguna vez?</p>
+                    <p class="fragment">Entendemos qué es un commit? Y un branch? Y un rebase?</p>
+                    <p class="fragment">Muchos de los problemas pasan por no entender esas cosas.</p>
+                </section>
+
+                <section>
+                    <p>No vamos a hacer un tutorial de Git. Asumimos que saben lo básico a esta altura.</p>
+                    <p class="fragment">Vamos a entender cómo funciona, para que lo sepan usar mejor.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/commit.png" style="width: 20%" />
+                    <h3>Commit</h3>
+                    <p class="fragment">Foto de los archivos del repo + metadata.</p>
+                </section>
+
+                <section>
+                    <p>Qué guarda un commit?</p>
+                    <ul>
+                        <li class="fragment">No guarda un <span style="color: #fc035e">diff</span>!</li>
+                        <li class="fragment"><strong>Archivos modificados</strong>: <span style="color: #b0ed2b">nueva copia del archivo</span>.</li>
+                        <li class="fragment"><strong>Archivos sin cambios</strong>: <span style="color: #b0ed2b">reusa link al existente</span>.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Dónde se guarda?</p>
+                    <p class="fragment">Base de datos de <strong>grafos</strong> inmutables!</p>
+                    <p class="fragment">Es lo que hay dentro del directorio .git.</p>
+                </section>
+
+                <section>
+                    <div class="r-stack">
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/commit_contents.png" style="height: 100%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # creamos un nuevo commit modificando solo server.py
+                            git commit -m "mejorado server" server.py
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/commit_contents2.png" style="height: 100%" />
+                    </div>
+                </section>
+
+                <section>
+                    <p>Es eficiente en uso de disco?</p>
+                    <p class="fragment">❌ Guarda N versiones (enteras) de cada archivo.</p>
+                    <p class="fragment">✅ Pero entre commits los archivos sin cambios no guardan nuevas copias.</p>
+                    <p class="fragment">✅ ...y además cada tanto se <strong>comprime</strong> el repo, reduciendo mucho la duplicación.</p>
+                    <p class="fragment">En la práctica termina siendo <strong>muy eficiente</strong>.</p>
+                </section>
+
+                <section>
+                    <p>Y además eso hace que sea <strong>super rápido</strong>!</p>
+                    <p>Ej: cómo obtenemos la versión X de un archivo?</p>
+                    <p class="fragment"><strong>En Git:</strong><p>
+                    <p class="fragment">🏃‍♀️ Ir al commit, seguir las flechas, y llegamos al archivo tal cual lo queremos.</p>
+                    <p class="fragment"><strong>En versionado que guarde diffs:</strong></p>
+                    <p class="fragment">🐢 Ir al commit inicial, y aplicar un montón de diffs hasta llegar a la versión deseada.</p>
+                </section>
+
+                <section>
+                    <p>Y qué pasa con archivos <span style="font-size: 2em">grandes</span> que cambian mucho?...</p>
+                    <p class="fragment">Un dataset de 100MB que actualizo seguido, una red neuronal entrenada, etc.</p>
+                    <p class="fragment">✅ Opción 1: no guardar en el repo!</p>
+                    <p class="fragment">✅ Opción 2: Git LFS, extensión que guarda esos archivos en otro lado (servidor de LFS), pero "parece" que están dentro del repo.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/branch.png" style="width: 20%" />
+                    <h3>Branch</h3>
+                    <p class="fragment">Una "versión" paralela donde puedo trabajar de manera independiente.</p>
+                </section>
+
+                <section>
+                    <p>Cuántos branches hay en esta historia de commits?</p>
+                    <img src="static/img/branches.png" style="width: 100%" />
+                    <p class="fragment">No sabemos! No necesariamente 3.</p>
+                </section>
+
+                <section>
+                    <p>❌ Un branch no es un conjunto de commits.</p>
+                    <p>❌ Un branch no es una rama de commmits.</p>
+                    <p class="fragment">Un branch es un <strong>puntero a un commit, movible</strong>.</p>
+                    <p class="fragment">Si tenemos un branch <strong>"activo"</strong>, al commitear se mueve el puntero.</p>
+                </section>
+
+                <section>
+                    <div class="r-stack">
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # activamos el branch main
+                            git switch main
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_1.png" style="height: 80%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # commiteamos teniendo "main" activo
+                            git commit -m "mejorado server" server.py
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_1.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_2.png" style="height: 80%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # creamos un nuevo branch para trabajar en otra feature
+                            git branch feature
+                            # y activamos ese nuevo branch
+                            git switch feature
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_2.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_3.png" style="height: 80%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # commiteamos teniendo "feature" activo
+                            git commit -m "hecho async para mejor performance" server.py
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_3.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_4.png" style="height: 80%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # volvemos a main, hay que arreglar algo urgenge!
+                            # (feature no está terminada, no queremos mezclarla con main)
+                            git switch main
+                            git commit -m "arreglado bug en server" server.py
+                            git commit -m "arreglado otro bug más en server" server.py
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_4.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_5.png" style="height: 100%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # me piden que deje de trabajar en la feature, 
+                            # y me ponga a trabajar en estabilidad
+                            git branch stability
+                            git switch stability
+                            git commit -m "hecho más estable" server.py
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_5.png" style="height: 100%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_6.png" style="height: 100%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/branch_steps_7.png" style="height: 100%" />
+                    </div>
+                </section>
+
+                <section>
+                    <p>Por eso en este caso, no tenemos forma de saber cuántos branches hay :)</p>
+                    <img src="static/img/branches.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <p>Bonus: podemos hacer que un branch apunte a lo que queramos...</p>
+                    <pre class="fragment"><code class="hljs bash" data-trim data-line-numbers>
+                        # forzar a que un branch apunte a un commit específico
+                        git branch -f BRANCH COMMIT
+                    </code></pre>
+                    <p class="fragment">En general: no lo hagan!!</p>
+                </section>
+
+                <section>
+                    <img src="static/img/tag.png" style="width: 15%" />
+                    <h3>Tags</h3>
+                    <p class="fragment">Nombres para versiones puntuales.</p>
+                </section>
+
+                <section>
+                    <ul>
+                        <li class="fragment">Un branch es un tag que avanza solo.</li>
+                        <li class="fragment">Un tag es un tag que no avanza solo.</li>
+                        <li class="fragment">Nos sirven para referenciar versiones de nuestra app: v1.0, v2.1, ...</li>
+                        <li class="fragment">A diferencia de un branch, no tenemos un "tag activo" que avance si commiteamos.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <div class="r-stack">
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # activamos el branch main
+                            git switch main
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/tag_steps_1.png" style="height: 80%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # creamos un tag
+                            git tag v1.0
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/tag_steps_1.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/tag_steps_2.png" style="height: 80%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # commiteamos cambios
+                            git commit -m "mejorado server" server.py
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/tag_steps_2.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/tag_steps_3.png" style="height: 80%" />
+                        <p class="fragment fade-in-then-out">El tag v1.0 sigue apuntando al commit que le dijimos, no se mueve. El branch (main) es el que se mueve.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <img src="static/img/merge.png" style="width: 20%" />
+                    <h3>Merge</h3>
+                    <p class="fragment">Traerme a un branch los cambios de otro branch.</p>
+                </section>
+
+                <section>
+                    <p>Qué hace Git en un merge?</p>
+                    <p>Ej: estoy en "main", y hago "git merge featureX"</p>
+                    <ol>
+                        <li class="fragment">Busca el último punto en común entre main y featureX.</li>
+                        <li class="fragment">Lista los commits entre el punto común y featureX, que main no tenga en su historia.</li>
+                        <li class="fragment">Crea un nuevo commit en main condensando todos esos commits faltantes en uno solo.</li>
+                        <li class="fragment">El nuevo commit apunta a los dos commits a los que los branches apuntaban antes.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <div class="r-stack">
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_steps_1.png" style="height: 80%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # mergeamos a main lo que hay en featureX
+                            git merge featureX
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_steps_1.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_steps_2.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_steps_3.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_steps_4.png" style="height: 80%" />
+                    </div>
+                </section>
+
+                <section>
+                    <p>Un merge no es nada super loco que afecte a muchos commits ni a los branches de forma extraña:</p>
+                    <p><strong>Es solo un commit!</strong></p>
+                    <p class="fragment">Deshacer un merge es una pavada: volver a apuntar al commit anterior y listo.</p>
+                    <pre class="fragment"><code class="hljs bash" data-trim data-line-numbers>
+                        # des-hacer el último merge
+                        git reset --hard HEAD^1
+                    </code></pre>
+                </section>
+
+                <section>
+                    <img src="static/img/merge.png" style="width: 20%" />
+                    <h3>Merge: casos especiales</h3>
+                </section>
+
+                <section>
+                    <p>Caso 1: qué pasa si hacemos "merge featureX" desde main?</p>
+                    <div class="r-stack">
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_ff_steps_1.png" style="height: 80%" />
+                        <p class="fragment fade-in-then-out">No hace falta un commit! Se hace un "fast forwards": se mueve main a apuntar a lo mismo que featureX.</p>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_ff_steps_1.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_ff_steps_2.png" style="height: 80%" />
+                        <p class="fragment fade-in-then-out">Podemos forzar a que se haga un commit en vez con "git merge featureX --no-ff".</p>
+                    </div>
+                </section>
+
+                <section>
+                    <p>Caso 2: qué pasa si hacemos "merge featureX" desde main?</p>
+                    <div class="r-stack">
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_nothing.png" style="height: 80%" />
+                        <p class="fragment fade-in-then-out">No hace falta nada! No hay commits que no tengamos ya.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <img src="static/img/merge.png" style="width: 20%" />
+                    <h3>Merge: conflictos</h3>
+                </section>
+
+                <section>
+                    <p>Un conflicto es un cambio a mergear que <strong>no tiene sentido en nuestro branch</strong>.</p>
+                    <p class="fragment">Ej: en main borramos una función. En featureX se le modificaron líneas.
+                        Hacemos merge de featureX a main: queremos modificar líneas que ya no existen! Git no puede saber qué hacer con eso.</p>
+                    <p class="fragment">No es una falla de Git. Es una contradicción que nosotros produjimos.</p>
+                    <p class="fragment">✅ Solución: le decimos a mano nosotros a Git cómo queremos que quede el archivo en el commit de Merge, y lo commiteamos.</p>
+                </section>
+
+                <section>
+                    <p>Cómo evitamos conflictos?</p>
+                    <p class="fragment">✅ Haciendo merges frecuentes.</p>
+                    <p class="fragment">✅ Haciendo branches chicos.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/rebase.png" style="width: 30%" />
+                    <h3>Rebase</h3>
+                    <p>Mover commits de un lugar a otro.</p>
+                </section>
+
+                <section>
+                    <p>Qué hace Git en un rebase?</p>
+                    <p>Ej: estoy en "featureX", y hago "git rebase main"</p>
+                    <ol>
+                        <li class="fragment">Busca el último punto en el que featureX se "separó" de main.</li>
+                        <li class="fragment">Busca el commit actual de main.</li>
+                        <li class="fragment">Por cada commit de featureX desde que se separó, crea un nuevo commit "igual", pero partiendo de main.</li>
+                        <li class="fragment">Al terminar, apunta featureX al último de esos nuevos commits.</li>
+                    </ol>
+                </section>
+                
+                <section>
+                    <div class="r-stack">
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/rebase_steps_1.png" style="height: 80%" />
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # estando parados en featureX,
+                            # "rebaseamos" featureX sobre main
+                            git rebase main
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/rebase_steps_1.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/rebase_steps_2.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/rebase_steps_3.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/rebase_steps_4.png" style="height: 80%" />
+                    </div>
+                </section>
+
+                <section>
+                    <img src="static/img/rebase.png" style="width: 30%" />
+                    <p>En menos palabras: mueve los commits para que partan desde un nuevo lugar.</p>
+                    <p class="fragment">Pero creando commits nuevos y olvidándose de los viejos (todo sigue siendo solo lectura).</p>
+                </section>
+
+                <section>
+                    <p>Como con el merge, es fácil de deshacer: simplemente hacer que featureX vuelva a apuntar a su viejo commit (que sigue en el repo!).</p>
+                </section>
+
+                <section>
+                    <p>Por qué haríamos un rebase?</p>
+                    <p class="fragment">Para actualizar nuestro branch: que tenga todo lo último de main por ejemplo.</p>
+                    <p class="fragment">...No se podría hacer lo mismo con merge?</p>
+                    <p class="fragment">Sí, pero la historia queda más entendible con rebase!</p>
+                    <p class="fragment">En palabras no es obvio, pero con un ejemplo se entiende :)</p>
+                </section>
+
+                <section>
+                    <h3>Merge vs Rebase</h3>
+                    <p>Ejemplo: trabajamos unos días en featureX que salió de main. Pero mientras tanto gente subió muchas otras cosas a main.</p>
+                    <p>Ahora queremos probar nuestro trabajo en featureX pero incluyendo todo lo que hay en main.</p>
+                </section>
+
+                <section>
+                    <img class="fragment fit-height" src="static/img/merge_vs_rebase_initial_state.png" style="height: 80%" />
+                </section>
+
+                <section>
+                    <p>Opción 1: con merge.</p>
+                    <div class="r-stack">
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # parados en featureX, nos traemos lo nuevo de main
+                            git merge main
+                            # ahora featureX tiene todo lo de main que nos faltaba!
+                            # probamos, arreglamos cosas que se rompieron al combinar todo
+                            git commit -m "arreglados bugs al mergear main" server.py
+                            # todo listo, lo mergeamos en main
+                            git switch main
+                            git merge featureX --no-ff  # se suele hacer así
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_vs_rebase_initial_state.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_vs_rebase_merge_1.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_vs_rebase_merge_2.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_vs_rebase_merge_3.png" style="height: 80%" />
+                    </div>
+                </section>
+
+                <section>
+                    <p>Opción 2: con rebase.</p>
+                    <div class="r-stack">
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # parados en featureX, rebaseamos sobre main
+                            git rebase main
+                            # ahora featureX tiene todo lo de main que nos faltaba!
+                            # probamos, arreglamos cosas que se rompieron al combinar todo
+                            git commit -m "arreglados bugs al mergear main" server.py
+                            # todo listo, lo mergeamos en main
+                            git switch main
+                            git merge featureX --no-ff  # se suele hacer así
+                        </code></pre>
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_vs_rebase_initial_state.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_vs_rebase_rebase_1.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_vs_rebase_rebase_2.png" style="height: 80%" />
+                        <img class="fragment fade-in-then-out fit-height" src="static/img/merge_vs_rebase_rebase_3.png" style="height: 80%" />
+                    </div>
+                </section>
+
+                <section>
+                    <img class="fragment fit-height" src="static/img/merge_vs_rebase_merge_3.png" style="height: 80%" />
+                    <img class="fragment fit-height" src="static/img/merge_vs_rebase_rebase_3.png" style="height: 80%" />
+                </section>
+
+                <section>
+                    <img src="static/img/branch.png" style="width: 20%" />
+                    <h3>Git Flow</h3>
+                    <p class="fragment">Estandarizando la forma de usar branches.</p>
+                </section>
+
+                <section>
+                    <ul>
+                        <li class="fragment">En qué branch trabajamos?</li>
+                        <li class="fragment">En qué branch están las cosas estables?</li>
+                        <li class="fragment">De dónde salen los branches de "feature X"?</li>
+                    </ul>
+                    <p class="fragment">Hay muchas formas de organizarse, pero hay un par de patrones que se usan mucho.<br>
+                        <strong>Git Flow</strong> es el más popular.</p>
+                </section>
+
+                <section>
+                    <h3>Branches de Git Flow:</h3>
+                    <ul style="font-size: 0.8em">
+                        <li class="fragment"><strong>Main</strong>: estable, siempre deployable, "production ready".</li>
+                        <li class="fragment"><strong>Develop</strong>: donde se hace el desarrollo, puede estar inestable.</li>
+                        <li class="fragment"><strong>FeatureX</strong>: para trabajar en features, salen de develop y se mergean a develop (rebase o no).</li>
+                        <li class="fragment"><strong>ReleaseX</strong>: para preparar un release, salen de develop y se mergean a main y develop.</li>
+                        <li class="fragment"><strong>HotfixX</strong>: para arreglar bugs en producción, salen de main y se mergean a main y develop.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/pr.png" style="width: 20%" />
+                    <h3>Pull Requests y Reviews</h3>
+                    <p>🧙‍♂️ YOU SHALL NOT PASS</p>
+                </section>
+
+                <section>
+                    <p>Hoy es habitual:</p>
+                    <ul>
+                        <li class="fragment"><strong>No</strong> mergear directamente a main o develop.</li>
+                        <li class="fragment">Hacer un PR (pull request) o MR (merge request) para que alguien revise los cambios.</li>
+                        <li class="fragment">Requerir al menos un approve (o más?) del PR para poder mergear los cambios.</li>
+                        <li class="fragment">Al tener los approves, mergeamos desde GitHub/GitLab/etc mismo, no a mano.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Pero... por qué?</p>
+                    <p class="fragment">✅ Ayuda a <strong>encontrar problemas</strong> temprano.</p>
+                    <p class="fragment">✅ Ayuda a <strong>repartir ownership</strong>!: ya no más "solo pepito vió esto".</p>
+                    <p class="fragment">✅ Ayuda a <strong>transmitir conocimiento</strong> a gente nueva: revisando PRs ven cómo trabajamos, haciéndoles reviews los ayudamos a mejorar.</p>
+                </section>
+
+                <section>
+                    <p>Algunos desafíos...</p>
+                    <p class="fragment">🚩 Lleva <strong>tiempo y esfuerzo</strong>.</p>
+                    <p class="fragment">🚩 No caer en dar approves "para sacármelo de encima", es inútil.</p>
+                    <p class="fragment">🚩 Requiere saber <strong>dar feedback respetuosa/amistosamente</strong>. No todos somos buenos en eso.</p>
+                    <p class="fragment">🚩 Requiere saber <strong>recibir feedback</strong>. No todos somos buenos en eso.</p>
+                </section>
+                
+                <section>
+                    <img src="static/img/text_search.png" style="width: 10%" />
+                    <p>En empresas de tech muy serias, hacer buenas reviews es tanto o más importante que escribir buen código.</p>
+                    <p class="fragment">🧑‍🤝‍🧑 Hacer <strong>crecer a otros</strong> es mucho más valioso y productivo que hacer todo uno mismo.</p>
+                    <p class="fragment">🤖 Y en la era de IA escribiendo código, saber revisarlo es <strong>muy valioso</strong> también.</p>
+                </section>
+
+                <section>
+                    <h2>Preguntas?</h2>
+                </section>
+            </div>
+        </div>
+
+        <script src="static/reveal_js/reveal.js"></script>
+        <script src="static/reveal_js/plugin/notes.js"></script>
+        <script src="static/reveal_js/plugin/markdown.js"></script>
+        <script src="static/reveal_js/plugin/highlight.js"></script>
+        <script src="static/init_slides.js"></script>
+    </body>
+</html>
