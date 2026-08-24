@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-		/>
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
 
         <title>TAP | Concurrencia y Paralelismo</title>
 
-		<link rel="stylesheet" href="static/reveal_js/reset.css" />
-		<link rel="stylesheet" href="static/reveal_js/reveal.css" />
+        <link rel="stylesheet" href="static/reveal_js/reset.css" />
+        <link rel="stylesheet" href="static/reveal_js/reveal.css" />
         <link rel="stylesheet" href="static/reveal_js/theme/night.css" />
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="static/reveal_js/plugin/highlight/monokai.css" />
+        <!-- Theme used for syntax highlighted code -->
+        <link rel="stylesheet" href="static/reveal_js/plugin/highlight/monokai.css" />
         <!-- My style overrides -->
-		<link rel="stylesheet" href="static/my_styles.css" />
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>
+        <link rel="stylesheet" href="static/my_styles.css" />
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
                     <h2>Concurrencia y Paralelismo</h2>
                     <p>Tópicos Avanzados de Programación</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>Para qué?</h3>
                     <ul>
                         <li class="fragment">Performance / aprovechar recursos.</li>
@@ -35,45 +35,45 @@
                     <p class="fragment">Y es un tema muchas veces muy poco comprendido.</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>Qué es "Concurrencia"?</h3>
                     <p class="fragment">Ejecutar múltiples tareas juntas, compitiendo por los mismos recursos (principalmente CPU).</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>Qué es "Paralelismo"?</h3>
                     <p class="fragment">Ejecutar múltiples tareas en <strong>simultáneo</strong>, en el mismo instante.</p>
                 </section>
 
-				<section>
+                <section>
                     <p>El paralelismo es <strong>una forma de concurrencia</strong>, pero hay otras formas también.</p>
                     <p class="fragment">Ej: "hacer un poquito de cada una" es concurrencia sin paralelismo.</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>"Miro twitter mientras estudio"</h3>
                     <p>Concurrencia? Paralelismo?</p>
                     <p class="fragment">Concurrencia pero no paralelismo. Si pauso el tiempo, en cada instante estoy haciendo una cosa, no hay paralelismo.</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>"Cruzo la calle mientras hablo por teléfono"</h3>
                     <p>Concurrencia? Paralelismo?</p>
                     <p class="fragment">Ambos! Concurrencia con paralelismo real. Si pauso el tiempo, estaba haciendo ambas cosas en el mismo instante.</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/computer.png" style="width: 30%" />
                     <h2>Programas y computadoras</h2>
                     <p>Antes de ir al código, tenemos que entender un par de cosas sobre ejecución de programas.</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>Procesos, hilos y memoria</h3>
                     <img src="static/img/processes.png" style="width: 80%" />
                 </section>
 
-				<section>
+                <section>
                     <h3>Sobre la memoria:</h3>
                     <ul>
                         <li class="fragment">Cada proceso tiene su propia memoria.</li>
@@ -82,7 +82,7 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <h3>Sobre la ejecución:</h3>
                     <ul>
                         <li class="fragment">Un core puede correr <strong>un hilo de un proceso</strong> por vez.</li>
@@ -92,7 +92,7 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/core.png" style="width: 10%" />
                     <h3>Con un solo core, puedo...?</h3>
                     <p class="fragment">Correr varios procesos?</p>
@@ -101,7 +101,7 @@
                     <p class="fragment">✅ Sí! Concurrencia, pero sin paralelismo real.</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/code.png" style="width: 10%" />
                     <h2>En código</h2>
                     <p>Tenemos 3 técnicas para concurrencia y/o paralelismo:</p>
@@ -112,20 +112,20 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/multiprocessing.png" style="width: 80%" />
                     <h3>Multiprocessing</h3>
                     <p class="fragment">Correr varios <strong>procesos</strong>, cada uno haciendo parte del trabajo.</p>
                 </section>
                 
-				<section>
+                <section>
                     <p>Concurrencia? Paralelismo?</p>
                     <ul>
                         <li class="fragment">Si tenemos un solo core, solo concurrencia.</li>
                         <li class="fragment">Si tenemos más de un core, paralelismo real!</li>
                     </ul>
                 </section>
-				<section>
+                <section>
                     <p>La memoria no es compartida...</p>
                     <p>Qué hacemos si necesitamos compartir info entre los procesos?</p>
                     <ul>
@@ -134,12 +134,12 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/multithreading.png" style="width: 30%" />
                     <h3>Multithreading</h3>
                     <p class="fragment">Correr varios <strong>hilos</strong> dentro de un mismo <strong>proceso</strong>.</p>
                 </section>
-				<section>
+                <section>
                     <p>Concurrencia? Paralelismo?</p>
                     <p class="fragment">Igual que multiprocessing!</p>
                     <ul class="fragment">
@@ -147,7 +147,7 @@
                         <li>Si tenemos más de un core, paralelismo real.</li>
                     </ul>
                 </section>
-				<section>
+                <section>
                     <p>La memoria es <strong>compartida</strong> sin hacer nada extra!</p>
                     <ul>
                         <li class="fragment">Mucho más fácil que memoria compartida entre procesos: cero trabajo adicional.</li>
@@ -155,32 +155,32 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <p>Hasta ahora Multithreading y Multiprocessing suenan muy buenos. Pero...</p>
                 </section>
-				<section>
+                <section>
                     <img src="static/img/speed.png" style="width: 20%" />
                     <h3>Context Switching y Performance</h3>
                     <p class="fragment">Cambiar entre procesos o hilos es costoso! Hay que descargar/volver a cargar info de contexto en el procesador.</p>
                     <p class="fragment">Esto empeora cuantos más hilos/procesos tengamos.</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/context_switch.png" style="width: 30%" />
                     <h3>Context Switching y Race Conditions</h3>
                     <p class="fragment">Si nos pausan y reanudan hilos/procesos en cualquier momento (cuando el OS decida), nuestra lógica se puede romper!</p>
                 </section>
-				<section>
+                <section>
                     <h3>Race conditions</h3>
-					<pre><code class="hljs python" data-trim data-line-numbers>
+                    <pre><code class="hljs python" data-trim data-line-numbers>
                         def actualizar_saldo(nuevo_pago):
                             saldo_actual = obtener_saldo_desde_la_db()
                             saldo_actual += nuevo_pago.monto
                             guardar_saldo_en_la_db(saldo_actual)
-					</code></pre>
+                    </code></pre>
                     <p class="fragment">Qué pasa si nos pausan en la linea 3, otro hilo/proceso se ejecuta y cambia el saldo en la db, y luego nos vuelve a tocar a nosotros?</p>
                 </section>
-				<section>
+                <section>
                     <h3>Race conditions</h3>
                     <ul>
                         <li class="fragment">Son muy difíciles de debuguear.</li>
@@ -190,19 +190,19 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/async.png" style="width: 30%" />
                     <h3>Async (especialmente IO)</h3>
                     <p class="fragment">En <strong>un solo hilo de un solo proceso</strong>, correr muchas "corrutinas" livianas y colaborativas.</p>
                     <p class="fragment">La clave: controlamos los context switches.</p>
                 </section>
-				<section>
+                <section>
                     <p>Este es por lejos el más difícil de entender...</p>
                     <p>Pero con código se puede visualizar mejor.</p>
                     <p><a href="https://www.youtube.com/watch?v=u_NDCBdHhzc">[Charla donde se explica esto mismo]</a></p>
                 </section>
 
-				<section>
+                <section>
                     <p>Repasando entonces:</p>
                     <ul>
                         <li class="fragment">Corrutinas (funciones) pausables.</li>
@@ -213,19 +213,19 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <h3>Bonus: performance</h3>
                     <p class="fragment">Cambiar entre corrutinas es mucho más barato que cambiar entre hilos/procesos!<br>
                         A veces a las corrutinas se les dice "hilos livianos".</p>
                     <p class="fragment">Qué tan livianas?: hay servers async que responden 1 millón de requests por segundo.</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>Bonus 2: debuguear es más fácil</h3>
                     <p class="fragment">Es muy difícil debuguear código cuando hay hilos/procesos independientes.</p>
                     <p class="fragment">En async: 1 hilo, 1 proceso, si pausamos se pausa todo, podemos saltar de una corrutina a otra, etc. <strong>Mucho más fácil!</strong></p>
                 </section>
-				<section>
+                <section>
                     <p>Peeeero...</p>
                     <ul>
                         <li class="fragment">Todo el código tiene que ser async (dependencias!), o mandar a threads lo que no sea "async friendly".</li>
@@ -233,7 +233,7 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <p>Concurrencia? Paralelismo?</p>
                     <p class="fragment">Es concurrencia, pero <strong>sin paralelismo</strong>.</p>
                     <ul class="fragment">
@@ -241,7 +241,7 @@
                         <li>No son hilos! No son procesos! No hay paralelismo en cores!</li>
                     </ul>
                 </section>
-				<section>
+                <section>
                     <p>La memoria es <strong>compartida</strong> sin hacer nada extra, como en Multithreading.</p>
                     <p class="fragment">Pero además, es mucho más fácil evitar race conditions.</p>
                     <ul>
@@ -250,17 +250,17 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/speed.png" style="width: 30%" />
                     <h3>Y la performance?</h3>
                     <p>Cuál técnica es más rápida? Depende de la situación? De qué depende? Etc.</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/cpu_heavy.png" style="width: 30%" />
                     <h3>CPU heavy code</h3>
                 </section>
-				<section>
+                <section>
                     <img src="static/img/cpu_concurrency.png" style="width: 90%" />
                     <ul>
                         <li class="fragment">Ganamos cuando hay paralelismo real. Solo concurrencia? No ganamos nada!</li>
@@ -270,11 +270,11 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/cpu_vs_io.png" style="width: 30%" />
                     <h3>IO heavy code</h3>
                 </section>
-				<section>
+                <section>
                     <img src="static/img/io_concurrency.png" style="width: 90%" />
                     <ul>
                         <li class="fragment">Si tenemos paralelismo real: ganamos performance por correr cosas al mismo tiempo.</li>
@@ -283,31 +283,31 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/io_concurrency_plus_parallelism.png" style="width: 40%" />
                     <p class="fragment">Si tenemos N cores, podemos combinar y ser super performantes:<br>
                         Un proceso por core, usando async en cada proceso para sacarle el máximo de jugo a cada core.</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/code.png" style="width: 10%" />
                     <h2>Demo time!</h2>
                     <p>Resolvamos un problema de ejemplo con las 3 técnicas y comparemos tiempos.</p>
                     <p><a href="https://github.com/fisadev/tap/tree/main/concurrency_examples">Código en el repo</a></p>
                 </section>
 
-				<section>
+                <section>
                     <h2>Preguntas?</h2>
                 </section>
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<script src="static/reveal_js/reveal.js"></script>
-		<script src="static/reveal_js/plugin/notes.js"></script>
-		<script src="static/reveal_js/plugin/markdown.js"></script>
-		<script src="static/reveal_js/plugin/highlight.js"></script>
-		<script src="static/init_slides.js"></script>
-	</body>
+        <script src="static/reveal_js/reveal.js"></script>
+        <script src="static/reveal_js/plugin/notes.js"></script>
+        <script src="static/reveal_js/plugin/markdown.js"></script>
+        <script src="static/reveal_js/plugin/highlight.js"></script>
+        <script src="static/init_slides.js"></script>
+    </body>
 </html>
 
 

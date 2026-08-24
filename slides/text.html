@@ -1,45 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-		/>
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
 
-		<title>TAP | Texto y búsqueda</title>
+        <title>TAP | Texto y búsqueda</title>
 
-		<link rel="stylesheet" href="static/reveal_js/reset.css" />
-		<link rel="stylesheet" href="static/reveal_js/reveal.css" />
+        <link rel="stylesheet" href="static/reveal_js/reset.css" />
+        <link rel="stylesheet" href="static/reveal_js/reveal.css" />
         <link rel="stylesheet" href="static/reveal_js/theme/night.css" />
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="static/reveal_js/plugin/highlight/monokai.css" />
+        <!-- Theme used for syntax highlighted code -->
+        <link rel="stylesheet" href="static/reveal_js/plugin/highlight/monokai.css" />
         <!-- My style overrides -->
-		<link rel="stylesheet" href="static/my_styles.css" />
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>
+        <link rel="stylesheet" href="static/my_styles.css" />
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
                     <h2>Texto y búsqueda</h2>
                     <p>Tópicos Avanzados de Programación</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/rectangle.png" style="width: 10%" />
                     <h2>I � unicode</h2>
                     <p>Qué es un encoding? Qué es unicode?</p>
                 </section>
 
-				<section>
+                <section>
                     <p class="fragment">No existe "un" estándar de "texto plano". Nunca veríamos caracteres rotos.</p>
                     <p class="fragment">Caracteres rotos 🠖 "problema de encodings!"</p>
                     <p class="fragment">...y qué es un encoding? 🠖 🤷</p>
                     <p class="fragment">Mucha desinformación y mitos, incluso en tutoriales y videos!</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/history.png" style="width: 10%" />
                     <h3>El inicio</h3>
                     <p class="fragment">Nosotros sabemos de <span style="color: magenta">caracteres</span>, las computadoras saben de <span style="color: #b0ed2b">bytes</span>.</p>
@@ -47,7 +47,7 @@
                     <p class="fragment">Alguien dijo: que la <span style="color: magenta">'A'</span> sea <span style="color: #b0ed2b">01000001</span>, la <span style="color: magenta">'B'</span> sea...</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/babel.png" style="width: 10%" />
                     <h3>El problema</h3>
                     <ul>
@@ -56,13 +56,13 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <p>Nacieron los muchos <strong>Encodings</strong>:
                         <span class="fragment">estándares de representación de <span style="color: magenta">caracteres</span> en <span style="color: #b0ed2b">bytes</span>.</span>
                     </p>
                 </section>
 
-				<section>
+                <section>
                     <p>Ej: ASCII encoding</p>
                     <div class="r-stack">
                         <img src="static/img/ascii.png" style="width: 80%" class="fragment fade-in-then-out"/>
@@ -70,14 +70,14 @@
                     </div>
                 </section>
 
-				<section>
+                <section>
                     <h3>Qué problemas tiene ASCII?</h3>
                     <p class="fragment">❌ Conjunto de caracteres muy limitado!</p>
                     <p class="fragment">❌ Largo fijo de bytes: nunca vamos a poder agregar más caracteres.</p>
                     <p class="fragment">✅ Solución: usar otros encodings mejores.</p>
                 </section>
 
-				<section>
+                <section>
                     <div class="columns">
                         <div>
                             <img src="static/img/babel.png" style="width: 40%" />
@@ -89,7 +89,7 @@
                     </div>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/rectangle.png" style="width: 10%" />
                     <h3>Qué es Unicode?</h3>
                     <p class="fragment">Unicode es un encoding...</p>
@@ -99,61 +99,61 @@
                     <p>NO</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/rectangle.png" style="width: 10%" />
                     <h3>Qué es Unicode?</h3>
                     <p class="fragment">Un estándar que define la lista de <span style="color: magenta">caracteres humanos</span>: con id, nombre, dibujito, reglas de mayúscula/minúscula, y más data de cada uno.</p>
                     <p class="fragment"><strong>NO ES UN ENCODING!</strong></p>
                 </section>
 
-				<section>
+                <section>
                     <h3>Ejemplos</h3>
                     <p><a href="https://www.compart.com/en/unicode/U+0041">[ A ]</a></p>
                     <p><a href="https://www.compart.com/en/unicode/U+03C0">[ π ]</a></p>
                 </section>
 
-				<section>
+                <section>
                     <p>Unicode NO dice cómo representar cada caracter en bytes, no es un encoding.</p>
                     <p class="fragment">El id NO es eso! es solo un id en la lista de caracteres.</p>
                     <p class="fragment">Pero ahora todos los encodings se definen en base a Unicode!</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/encoding.png" style="width: 15%" />
                     <h3>Redefinimos Encoding:</h3>
                     <p class="fragment">Algo que nos dice cómo representar en <span style="color: #b0ed2b">bytes</span> cada <span style="color: magenta">caracter</span> de Unicode.</p>
                     <p class="fragment">Ej: con encoding ASCII el caracter <span style="color: magenta">U+0041</span> de Unicode (la <span style="color: magenta">letra 'A'</span>) se representa con los bytes <span style="color: #b0ed2b">01000001</span>.</p>
                 </section>
 
-				<section>
+                <section>
                     <p class="fragment">Unicode ya tiene más de un millón de caracteres, encodings viejos cubren solo una pequeña parte (ej: ASCII no tiene π).</p>
                     <p class="fragment">El mismo grupo que mantiene Unicode, creó encodings mucho mejores! UTF-8/16/32</p>
                     <p class="fragment">Los encodings UTF cubren <strong>todo</strong> Unicode, por más que se vaya actualizando (no se van a acabar los números porque usan largo variable).</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/code.png" style="width: 10%" />
                     <h3>Encodings al programar</h3>
                 </section>
 
-				<section>
+                <section>
                     <p class="fragment">En lenguajes modernos un <span style="color: magenta">"texto"</span> (string) es una cadena de caracteres unicode.</p>
                     <p class="fragment">Pero al guardar a disco, base de datos, mandar por red, etc, tenemos que convertirlos a <span style="color: #b0ed2b">bytes</span>.</p>
                     <p class="fragment">Todas las operaciones de texto (largo, combinar, pasar a mayúscula, etc) deberían ser <strong>sobre strings, no sobre bytes</strong>.</p>
                 </section>
 
-				<section>
+                <section>
                     <p class="fragment"><strong>"Encodeamos"/codificamos</strong>: <span style="color: magenta">'A'</span> 🠖 <span style="color: #b0ed2b">01000001</span><br>
                         Tomamos caracteres unicodes (texto) y los convertimos a bytes.</p>
                     <p class="fragment"><strong>Decodificamos</strong>: <span style="color: #b0ed2b">01000001</span> 🠖 <span style="color: magenta">'A'</span><br>
                         Tomamos bytes y los convertimos a una secuencia de caracteres unicode (texto).</p>
                 </section>
 
-				<section>
+                <section>
                     <p>...salvo algunos lenguajes viejos/malos donde la división no es clara, generando muchos problemas de todo tipo (lenguajes que solo manejan bytes encodeados y no entienden de Unicode, como PHP).</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>Idealmente</h3>
                     <ol>
                         <li class="fragment">Leemos/recibimos <span style="color: #b0ed2b">bytes</span>, los <strong>decodificamos</strong> usando el encoding que corresponda, y nos quedamos con <span style="color: magenta">texto</span> (strings unicode).</li>
@@ -162,7 +162,7 @@
                     </ol>
                 </section>
 
-				<section>
+                <section>
                     <p>A veces sucede automáticamente:</p>
                     <ul>
                         <li class="fragment">Los lenguajes saben decodificar/encodear automáticamente al leer o escribir archivos.</li>
@@ -170,7 +170,7 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <h3>Qué encoding usamos?</h3>
                     <p class="fragment">Idealmente UTF-8 en todo lo que podamos.</p>
                     <ul>
@@ -182,7 +182,7 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <p>Pero no siempre controlamos nosotros el encoding:</p>
                     <ul>
                         <li class="fragment">Archivos que nos generan otros sistemas.</li>
@@ -241,12 +241,12 @@
                     <p>El caso del navegador (HTTP + HTML) es especialmente interesante...</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/search.png" style="width: 40%" />
                     <h2>Búsqueda de texto</h2>
                 </section>
 
-				<section>
+                <section>
                     <div class="columns">
                         <div>
                             <h3>Búsqueda interna</h3>
@@ -259,19 +259,19 @@
                     </div>
                 </section>
 
-				<section>
+                <section>
                     <h3>Búsqueda de texto interna: por qué?</h3>
                     <p class="fragment">Los usuarios esperan poder buscar.</p>
                     <p class="fragment">Es la forma más intuitiva de acceder a contenido.</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>Cómo lo resolverían?</h3>
                     <p>Ej: tenemos una base de datos de productos para runners, y los usuarios quieren poder buscar.</p>
                     <p>Qué hacemos?</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/sql.png" style="width: 10%" />
                     <h3>Buscando con SQL</h3>
                     <div class="r-stack">
@@ -306,12 +306,12 @@
                     </div>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/sql.png" style="width: 10%" />
                     <p>❌ SQL no está pensado para búsquedas de texto completo, es una muy mala herramienta para ello.</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/sql.png" style="width: 10%" />
                     <p>❌ Problemas de <strong>calidad de resultados</strong>:</p>
                     <ul>
@@ -322,7 +322,7 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/sql.png" style="width: 10%" />
                     <p>❌ Problemas de <strong>performance</strong>:</p>
                     <ul>
@@ -330,17 +330,17 @@
                     </ul>
                 </section>
 
-				<section>
+                <section>
                     <p>Y entonces? Qué hacemos? Los datos están en la base de datos y hay que buscar...</p>
                     <p class="fragment">Usamos un <strong>motor de búsqueda de texto</strong>!</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/text_search.png" style="width: 20%" />
                     <h3>Motores de búsqueda de texto completo</h3>
                 </section>
-	
-				<section>
+    
+                <section>
                     <p>Leamos todas las descripciones y construyamos un índice de búsqueda de texto:</p>
                     <table class="fragment">
                         <tr>
@@ -363,12 +363,12 @@
                     <p class="fragment">Y lo hacemos ignorando <strong>stopwords</strong>!: "para", "la", "de", "un"...</p>
                 </section>
 
-				<section>
+                <section>
                     <p>La columna "Palabra" se puede <strong>indexar</strong>!<br>(no filtramos más por "LIKE", sino por "=").</pr>
                     <p>Ir a una palabra es super rápido.</p>
                 </section>
 
-				<section>
+                <section>
                     <h3>Cómo lo usamos?</h3>
                     <p class="fragment">Cuando el usuario busque "zapatillas para correr":</p>
                     <ol>
@@ -441,7 +441,7 @@
                     <p class="fragment">Al rankear resultados, <strong>podemos "pesarlos" en base a esos dos números</strong>.</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/text_search.png" style="width: 10%" />
                     <h3>Combinando todo</h3>
                     <p class="fragment">Cuando el usuario busque "zapatillas para correr":</p>
@@ -452,7 +452,7 @@
                         <li class="fragment">Los rankeamos dándoles peso por cantidad de raíces que contienen, y sus frecuencias y rarezas.</li>
                     </ol>
                 </section>
-	
+    
                 <section>
                     <h3>Hay que mantener el índice</h3>
                     <p class="fragment">Si la base de datos cambia, hay que actualizar el índice.</p>
@@ -492,7 +492,7 @@
                     <p><a href="https://github.com/fisadev/tap/tree/main/fts_example">Código en el repo</a></p>
                 </section>
 
-				<section>
+                <section>
                     <div class="columns">
                         <div>
                             <h3>Búsqueda interna</h3>
@@ -505,17 +505,17 @@
                     </div>
                 </section>
 
-				<section>
+                <section>
                     <h3>Búsqueda de texto externa: por qué?</h3>
                     <p class="fragment">Si más gente encuentra nuestro sitio, más gente entra.</p>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/spider.png" style="width: 20%" />
                     <h3>Cómo funcionan los motores de búsqueda externos?</h3>
                 </section>
 
-				<section>
+                <section>
                     <img src="static/img/google_index.png" style="width: 100%" />
                 </section>
 
@@ -585,12 +585,12 @@
                     <h2>Preguntas?</h2>
                 </section>
             </div>
-		</div>
+        </div>
 
-		<script src="static/reveal_js/reveal.js"></script>
-		<script src="static/reveal_js/plugin/notes.js"></script>
-		<script src="static/reveal_js/plugin/markdown.js"></script>
-		<script src="static/reveal_js/plugin/highlight.js"></script>
-		<script src="static/init_slides.js"></script>
-	</body>
+        <script src="static/reveal_js/reveal.js"></script>
+        <script src="static/reveal_js/plugin/notes.js"></script>
+        <script src="static/reveal_js/plugin/markdown.js"></script>
+        <script src="static/reveal_js/plugin/highlight.js"></script>
+        <script src="static/init_slides.js"></script>
+    </body>
 </html>
