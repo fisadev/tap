@@ -419,7 +419,7 @@
                     <p>🚨<strong>CUIDADO!</strong>: rebase vs cambios pusheados.</p>
                     <p class="fragment">Si hacemos rebase de un branch que ya pusheamos y alguien más lo bajó, se arma quilombo.</p>
                     <p class="fragment">Nuestro branch featureX apunta a un commit con su historia, mientras que featureX en la PC de pepito apunta a otro commit con historia diferente!</p>
-                    <p class="fragment">Por lo general: no hacer rebase de branches pusheados que otra gente se bajó.</p>
+                    <p class="fragment">Por lo general: <strong>no hacer rebase de branches pusheados que otra gente se bajó></strong>.</p>
                 </section>
 
                 <section>
@@ -456,7 +456,7 @@
                 </section>
 
                 <section>
-                    <p>Hoy es habitual:</p>
+                    <p>Hoy es estándar en la industria:</p>
                     <ul>
                         <li class="fragment"><strong>No</strong> mergear directamente a main o develop.</li>
                         <li class="fragment">Hacer un PR (pull request) o MR (merge request) para que alguien revise los cambios.</li>
@@ -485,6 +485,402 @@
                     <p>En empresas de tech muy serias, hacer buenas reviews es tanto o más importante que escribir buen código.</p>
                     <p class="fragment">🧑‍🤝‍🧑 Hacer <strong>crecer a otros</strong> es mucho más valioso y productivo que hacer todo uno mismo.</p>
                     <p class="fragment">🤖 Y en la era de IA escribiendo código, saber revisarlo es <strong>muy valioso</strong> también.</p>
+                </section>
+
+                <section>
+                    <p>Y ya que hablamos de prácticas modernas, veamos algunas cosas relacionadas!</p>
+                </section>
+
+                <section>
+                    <img src="static/img/checks.png" style="width: 10%" />
+                    <h2>CI / CD / TDD</h2>
+                    <p>Automatizando la calidad y deployments.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/checks.png" style="width: 10%" />
+                    <h3>Repaso: unit tests</h3>
+                    <p class="fragment">Tests <strong>ejecutables</strong> que prueban cada parte de nuestro código.</p>
+                </section>
+
+                <section>
+                    <p>Repaso: por qué son importantes?</p>
+                    <ul>
+                        <li class="fragment">Nos ayudan a <strong>encontrar bugs</strong> en nuestro código.</li>
+                        <li class="fragment">Nos ayudan a <strong>evitar romper cosas</strong> al hacer cambios.</li>
+                        <li class="fragment">Nos ayudan a <strong>documentar</strong> cómo usar nuestro código.</li>
+                    </ul>
+                    <p class="fragment">Hoy no es aceptable no tener unit tests (no hace falta 100% de coverage).</p>
+                </section>
+                
+                <section>
+                    <p>Asumimos que nuestro proyecto tiene:</p>
+                    <p class="fragment">✅ Una batería de tests unitarios ejecutables.</p>
+                    <p class="fragment">✅ Con razonable "coverage".</p>
+                    <p class="fragment">✅ Actualizados.</p>
+                    <p class="fragment">→ Les confiamos: si pasan, no rompimos nada.</p>
+                </section>
+
+                <section>
+                    <p>Pero además de tests unitarios, hay más que podemos automatizar:</p>
+                    <ul>
+                        <li class="fragment">Linting: estilo de código.</li>
+                        <li class="fragment">Type checking: tipos de variables.</li>
+                        <li class="fragment">Bugs: herramientas que detectan bugs comunes.</li>
+                        <li class="fragment">Seguridad: herramientas que detectan vulnerabilidades automáticamente.</li>
+                    </ul>
+                    <p class="fragment">→ Hoy es estándar usar esas herramientas.</p>
+                </section>
+
+                <section>
+                    <p>Pero cómo/dónde ejecutamos todo eso?</p>
+                    <p class="fragment">No podemos depender de que cada dev lo haga en su máquina, porque no todos lo harán.</p>
+                    <p class="fragment">✅ Solución: CI! (Continuous Integration)</p>
+                </section>
+
+                <section>
+                    <img src="static/img/checks.png" style="width: 10%" />
+                    <h3>CI</h3>
+                    <p>Automatizar la ejecución de tests y otras herramientas de calidad.</p>
+                </section>
+
+                <section>
+                    <p>Además de poder correr los tests + resto de herramientas en nuestra máquina mientras desarrollamos,
+                        hoy es estándar que corran...</p>
+                </section>
+
+                <section>
+                    <img src="static/img/checks.png" style="width: 10%" />
+                    <p>...en cada push a un branch.</p>
+                    <p class="fragment">→ Así si nos olvidamos de correr localmente, igual nos enteramos.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/checks.png" style="width: 10%" />
+                    <p>...en cada PR: si no pasan, no se puede mergear!</p>
+                    <p class="fragment">→ Así nos aseguramos de que no mergeamos a develop/main cosas rotas.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/checks.png" style="width: 10%" />
+                    <p>...en cada merge a main o develop.</p>
+                    <p class="fragment">→ Así nos enteramos rápido si por alguna razón igual rompimos develop o main.</p>
+                </section>
+
+                <section>
+                    <p>Si tenemos esas seguridades... podemos confiar en que las cosas se deployen solas?</p>
+                    <p class="fragment">→ CD! (Continuous Deployments)</p>
+                </section>
+
+                <section>
+                    <img src="static/img/deploy.png" style="width: 10%" />
+                    <h3>CD</h3>
+                    <p>Automatizar el deploy de nuestra app.</p>
+                </section>
+
+                <section>
+                    <p>Qué es "automatizar" deploys? Hay dos aspectos muy diferentes:</p>
+                    <ul>
+                        <li class="fragment">Que el proceso de deploy no requiera intervención humana (ej: "un click", "correr un comando", y listo).</li>
+                        <li class="fragment">Que la decisión de <strong>cuándo</strong> deployar pueda tomarse automáticamente (ej: si los tests pasaron, develop se deploya solo).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p class="fragment">✅ Que el proceso esté automatizado hoy es una práctica estándar y básica.</p>
+                    <p class="fragment">🚀 CD se refiere a lo segundo: que la decisión de cuándo deployar sea automática.</p>
+                </section>
+
+                <section>
+                    <p>🚀 Cuándo deployarían automáticamente y a qué entornos?</p>
+                    <p class="fragment">Hoy hay muchos niveles/opciones!</p>
+                </section>
+
+                <section>
+                    <p>🚀 Al mergear a develop: deploy automático a un entorno de "dev".</p>
+                    <ul>
+                        <li class="fragment">Esto es muy estándar y muy usado.</li>
+                        <li class="fragment">Sobre todo útil para que devs puedan probar la última versión con todo lo nuevo en un entorno realista.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>🚀 Al crear un PR o agregarle cambios: deploy automático a un entorno efímero solo para ese PR.</p>
+                    <ul>
+                        <li class="fragment">Esto es menos común por el costo.</li>
+                        <li class="fragment">Sobre todo útil para que los devs puedan probar cosas antes de mergear a develop: sin terminar, dudas de si funciona, etc.</li>
+                        <li class="fragment">Evita usar el entorno de dev para probar cosas quizás rotas, complicándole la vida al resto.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>🚀 Al mergear a main: deploy automático a un entorno de "staging".</p>
+                    <ul>
+                        <li class="fragment">Esto es bastante estándar también.</li>
+                        <li class="fragment">Sobre todo útil para que QA pueda probar cosas antes de que se deployen a prod, en un entorno más estable que dev.</li>
+                        <li class="fragment">"v12.5 ya está en staging! QA puede probar, si anda bien, la deployamos a prod"</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>🚀 Al mergear a main: deploy automático a prod.</p>
+                    <p class="fragment">😱</p>
+                    <ul>
+                        <li class="fragment">Esto se hace en algunas empresas, pero es menos común.</li>
+                        <li class="fragment">La confianza en los unit tests + herramientas automáticas tiene que ser <strong>altísima</strong>.</li>
+                        <li class="fragment">Mergear a main pasa a ser algo mucho más delicado!</li>
+                        <li class="fragment">Suele implicar que no hay QA manual, o que se hace antes de que las cosas lleguen a main.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Una forma de reducir el riesgo de los deploys automáticos a prod: canary releases! 🐤</p>
+                    <ul>
+                        <li class="fragment">Esto es bastante común.</li>
+                        <li class="fragment">Se deploya a un pequeño porcentaje de usuarios/servidores, y si todo anda bien, se va aumentando el porcentaje.</li>
+                        <li class="fragment">Si algo anda mal, se corta el deploy y se vuelve a la versión anterior.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/ai_and_human.png" style="width: 20%" />
+                    <h2>IA en el desarrollo</h2>
+                </section>
+
+                <section>
+                    <p>🗨 Hay <strong>mucho</strong> hype, debate, exageración, negación, e incertidumbre alrededor de la IA en el desarrollo de software.</p>
+                    <p class="fragment">Pero ya es innegable su utilidad y que está <strong>transformando la profesión</strong>.</p>
+                </section>
+
+                <section>
+                    <p>Algunos hechos:</p>
+                    <p class="fragment">✅ Las empresas lo requieren/fomentan/prefieren.</p>
+                    <p class="fragment">✅ La diferencia en productividad es grande, ya no se puede ignorar.</p>
+                    <p class="fragment">✅ Y también hay diferencias grandes entre quienes saben usarlas bien y quienes no (qué es "bien"??).</p>
+                </section>
+
+                <section>
+                    <p>Algunas dudas:</p>
+                    <p class="fragment">❔ Rentabilidad/sostenibilidad del uso actual.</p>
+                    <p class="fragment">❔ Cómo es el futuro de nuestra profesión.</p>
+                    <p class="fragment">❔ Impacto en habilidades humanas de desarrollo, y si importa.</p>
+                </section>
+
+                <section>
+                    <p>Hay <strong>muchísimo</strong> para debatir, pero nos vamos a enfocar en <strong>prácticas actuales de desarrollo con IA</strong>.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/ai_chat.png" style="width: 15%" />
+                    <h3>Web chatbots</h3>
+                    <p>Copiar y pegar desde ChatGPT en la web, Gemini, etc.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/web_ai_chat_example.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <p>No son "inútiles", pero son definitivamente <span style="color: #fc035e"><strong>subóptimos</strong></span> como herramienta de desarrollo.</p>
+                    <p class="fragment">❌ Fuertísima falta de contexto → malos resultados! (no ven tu repo, no corren tu código/tests, no usan tools que tenés instaladas, etc).</p>
+                    <p class="fragment">❌ Flujo de trabajo muy limitado y tosco (copiar, pegar, scroll, sin versionado ni diffs, 100% human-in-the-loop).</p>
+                    <p class="fragment">✅ Sí útiles para discutir ideas, pedir ejemplos de libs, preguntar conocimiento general.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/code.png" style="width: 10%" />
+                    <h3>En el editor/IDE</h3>
+                    <p>Lo más básico.</p>
+                </section>
+
+                <section>
+                    <p>Hay dos formas de usar IA en casi todo editor moderno, usen alguno que lo tenga (nativo o plugins!):</p>
+                    <ul>
+                        <li class="fragment">Autocomplete.</li>
+                        <li class="fragment">Chat integrado.</li>
+                    </ul>
+                    <p class="fragment">Ambas mucho más naturales y poderosas que copiar/pegar en un chat web!</p>
+                </section>
+
+                <section>
+                    <img src="static/img/editor_ai_example.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <p class="fragment">✅ Pueden leer y correr tu código, tests, linters, validar, probar cosas, usar herramientas, etc.</p>
+                    <p class="fragment">✅ Flujo de desarrollo: ver el diff de cambios, aceptarlos o no, hacer commits, y modos autónomos!!</p>
+                    <p class="fragment">✅ Y se sigue pudiendo charlar como si fuese un web chatbot, pero ahora con más contexto y habilidades!</p>
+                </section>
+
+                <section>
+                    <p>Asumimos que ya lo están usando :) Pero consejos:</p>
+                    <ul>
+                        <li class="fragment">No confiar ciegamente, todavía hacen cosas mal: revisar, entender, y modificar si hace falta.</li>
+                        <li class="fragment">Vos sos owner de lo que commiteas, no la IA: si algo rompe, es tu responsabilidad.</li>
+                        <li class="fragment">Si estás aprendiendo algo: escribir vos el código te ayuda a entenderlo mejor. Take it or leave it.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/coding_agent.png" style="width: 15%" />
+                    <h3>Agentes que codean</h3>
+                    <p>Claude Code, etc.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/coding_agent_example.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <p>Casi lo mismo que el chat dentro de los editores. Mismas ventajas y consejos.</p>
+                    <p class="fragment">Pero en general, con un flujo de trabajo más "desatendido" y menos orientado a tocar nosotros el código.</p>
+                    <p class="fragment">✅❌ Eso es una ventaja y una desventaja al mismo tiempo: +automatización, +paralelizar trabajo, -control, -aprender, entre otras cosas.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/pr.png" style="width: 15%" />
+                    <h3>Agentes que revisan</h3>
+                    <p>Reviews automatizadas en PRs (by Claude, Copilot, Codex, etc).</p>
+                </section>
+
+                <section>
+                    <img src="static/img/pr_ai_review_example.png" style="width: 100%" />
+                </section>
+
+                <section>
+                    <p>Automáticamente o a demanda, una IA puede revisar cada PR y dar feedback.</p>
+                    <p class="fragment">Hoy es muy usado en empresas!</p>
+                </section>
+
+                <section>
+                    <p class="fragment">✅ Útil sobre todo para encontrar problemas, bugs, smells, cosas mejorables.</p>
+                    <p class="fragment">✅ No es reemplazo de reviews humanas! (por las ventajas de ownership y aprendizaje).</p>
+                    <p class="fragment">✅ Increíblemente metódicos y con mucho contexto en "la cabeza".</p>
+                    <p class="fragment">❌ A veces se pueden poner "intensos" con detalles innecesarios → saber decirles que no.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/code.png" style="width: 10%" />
+                    <h3>Ayudas en el repo</h3>
+                    <p>Potenciando a los editores y agentes que codean y revisan.</p>
+                </section>
+
+                <section>
+                    <p>Hay cosas que podemos hacer en nuestros repos que <strong>potencian mucho</strong> las capacidades de las herramientas que vimos.</p>
+                    <p class="fragment">🤖 Ya no escribimos código y docs solo para nosotros, ahora también para agentes que usen el repo!</p>
+                </section>
+
+                <section>
+                    <img src="static/img/code.png" style="width: 5%" />
+                    <p><strong>AGENTS.md</strong> y similares (CLAUDE.md, etc).</p>
+                    <p class="fragment">🧑‍🤝‍🧑Todo repo tiene un README.md en la raíz, con la ayuda básica para humanos.</p>
+                    <p class="fragment">🤖 El AGENTS.md agrega info para agentes, que por default van a leer cuando trabajen en nuestro repo.</p>
+                </section>
+
+                <section>
+                    <p>Un buen AGENTS.md puede simplificar <strong>mucho</strong> el uso de agentes:</p>
+                    <p class="fragment">✅ Qué herramientas, libs, frameworks, puede usar, cómo ejecutar las cosas necesarias.</p>
+                    <p class="fragment">✅ Convenciones, criterios, costumbres de nuestro equipo, para no repetirle mil veces "mejor hacelo de tal forma".</p>
+                    <p class="fragment">✅ Qué cosas nos interesa que mire (o no mire!) en las reviews, con qué nivel de detalle, etc.</p>
+                    <p class="fragment">✅ Arquitectura general, dónde poner/buscar cada cosa, dónde leer más docs.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/code.png" style="width: 5%" />
+                    <p><strong>Skills</strong> (.claude/skills, .github/skills, etc).</p>
+                    <p class="fragment">❌ El AGENTS.md no puede tener miles de instrucciones detalladas de cómo hacer todo, es un resumen.</p>
+                    <p class="fragment">✅ Para instrucciones detalladas creamos skills: <strong>archivos explicando cómo hacer cosas específicas</strong> más complejas.</p>
+                </section>
+
+                <section>
+                    <p>Skill de ejemplo: <br>
+                        <strong>.claude/skills/debug_prod_error/SKILL.md</strong></p>
+                    <p class="fragment">En el archivo describimos todo lo que le recomendamos hacer al agente para debuguear un error en producción:</p>
+                    <ul class="fragment">
+                        <li>Qué logs mirar, cómo filtrarlos, qué buscar.</li>
+                        <li>Qué herramientas usar, cómo ejecutarlas, qué mirar en cada una.</li>
+                        <li>Qué cosas probar, cómo probarlas, qué resultados esperar.</li>
+                        <li>Qué cosas NO probar, para no perder tiempo.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Luego desde Claude Code:</p>
+                        <pre><code class="hljs text" data-trim>
+                            a las 14:05 hubo un error raro en prod
+                            debuguealo, decime qué pasó y cómo arreglarlo
+                        </code></pre>
+                    <p class="fragment">😎</p>
+                </section>
+
+                <section>
+                    <img src="static/img/code.png" style="width: 5%" />
+                    <p>Y <strong>docs en general</strong>.</p>
+                    <p class="fragment">Si tenemos buena doc en nuestro repo, eso puede ayudar <strong>muchísimo</strong>a los agentes.</p>
+                    <p class="fragment">Tienen capacidad de leer mucho más que nosotros! Escriban sin miedo, mucho y detallado.</p>
+                </section>
+
+                <section>
+                    <p>Hasta acá un agente puede leer del repo y usar herramientas en nuestra máquina.</p>
+                    <p><strong>Super útil</strong>. Pero tiene límites:</p>
+                    <ul>
+                        <li class="fragment">Cómo lee los logs de prod?</li>
+                        <li class="fragment">Cómo busca info en tickets o chats sobre fallos anteriores?</li>
+                        <li class="fragment">Cómo reinicia un servicio en prod que se colgó?</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Todo eso se resuelve con MCPs!</p>
+                </section>
+
+                <section>
+                    <img src="static/img/tools.png" style="width: 15%" />
+                    <h3>MCPs</h3>
+                    <p>Poderes nuevos para los agentes.</p>
+                </section>
+
+                <section>
+                    <p>Los MCPs son <strong>APIs para agentes</strong>: el agente las puede usar para lograr cosas. Ej:</p>
+                    <p class="fragment">🛠 Con el MCP de DataDog puede leer logs de prod.</p>
+                    <p class="fragment">🛠 Con el MCP de <s>Jira</s> Linear puede leer los tickets.</p>
+                    <p class="fragment">🛠 Con el MCP de Slack lee los chats.</p>
+                    <p class="fragment">🛠 Con el MCP de AWS puede manipular infra.</p>
+                </section>
+
+                <section>
+                    <p>Cómo funcionan?</p>
+                    <p class="fragment">Por dentro son simplemente <strong>APIs web</strong>.</p>
+                    <p class="fragment">... con un formato estándar para listar herramientas y llamarlas.</p>
+                    <p class="fragment">... y un formato estándar para darle info al agente sobre cómo usarlas.</p>
+                </section>
+
+                <section>
+                    <p>Cómo agregamos un MCP?</p>
+                    <p class="fragment">Depende del agente que estamos usando, pero en general es una pavada.<br>
+                        (suele ser correr un comando o configurar una url).</p>
+                </section>
+
+                <section>
+                    <img src="static/img/ai_and_human.png" style="width: 10%" />
+                    <h3>Resumiendo</h3>
+                    <p class="fragment">Con un agente local (dentro o fuera del editor)</p>
+                    <p class="fragment">+ un repo bien preparado (AGENTS.md, skills, docs)</p>
+                    <p class="fragment">+ un buen set de MCPs conectados</p>
+                    <p class="fragment">→ podemos hacer cosas <strong>muy poderosas</strong> con IA en el desarrollo!</p>
+                </section>
+
+                <section>
+                    <img src="static/img/developer.png" style="width: 20%" />
+                    <h3>Y qué pasa con ustedes como devs?</h3>
+                </section>
+
+                <section>
+                    <ul>
+                        <li class="fragment">Los va a reemplazar / dejar sin trabajo?</li>
+                        <li class="fragment">Ayuda o impide aprender?</li>
+                        <li class="fragment">Vibecodear al 100% como profesión?</li>
+                    </ul>
                 </section>
 
                 <section>
