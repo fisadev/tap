@@ -108,7 +108,7 @@
 
                 <section>
                     <img src="static/img/server.png" style="width: 15%" />
-                    <h3>Opción 1: una máquina</h3>
+                    <h3>Opción 1:<br>Una máquina</h3>
                     <p>Máquina física, o VM contratada en algún proveedor.</p>
                 </section>
 
@@ -142,7 +142,7 @@
  
                 <section>
                     <img src="static/img/servers.png" style="width: 15%" />
-                    <h3>Opción 2: una máquina por servicio</h3>
+                    <h3>Opción 2:<br>Una máquina por servicio</h3>
                     <p>Máquinas físicas, o VMs contratadas en algún proveedor.</p>
                 </section>
 
@@ -171,7 +171,7 @@
                     <p class="fragment">Qué uptime va a tener nuestra app en la opción 1?</p>
                     <p class="fragment">95%</p>
                     <p class="fragment">Qué uptime va a tener nuestra app en la opción 2? (asumamos 3 VMs)</p>
-                    <p class="fragment">95% * 95% * 95% = 85%! 😱</p>
+                    <p class="fragment">95% * 95% * 95% = 85%! 3x downtime!!! 😱</p>
                 </section>
 
                 <section>
@@ -181,14 +181,18 @@
 
                 <section>
                     <img src="static/img/servers.png" style="width: 15%" />
-                    <h3>Opción 3: N máquinas por servicio</h3>
+                    <h3>Opción 3:<br>N máquinas por servicio</h3>
                     <p>Máquinas físicas, o VMs contratadas en algún proveedor.</p>
+                </section>
+                
+                <section>
+                    <p>Implica tener alguna especie de <strong>"molde"</strong> para cada servicio, que nos permita crear nuevas VMs de ese servicio fácilmente.</p>
                 </section>
 
                 <section>
                     <p>Mejora mucho más!:</p>
                     <p class="fragment">✅ Ya no tenemos techo por servicio.</p>
-                    <p class="fragment">✅ Podemos escalar automáticamente: prender/apagar máquinas según demanda, pagando menos.</p>
+                    <p class="fragment">✅ Eficiencia! Podemos escalar automáticamente: prender/apagar máquinas según demanda, pagando menos.</p>
                     <p class="fragment">✅ Y escalar sin downtime.</p>
                     <p class="fragment">✅ Mejora el uptime! Si una VM está caída, otra puede responder (ej: 3 VMs del mismo servicio con 95% de uptime = 99.9%).</p>
                 </section>
@@ -263,13 +267,118 @@
                 </section>
 
                 <section>
-                    <p>TODO slides (borrador de slides faltantes):</p>
+                    <img src="static/img/containers.png" style="width: 15%" />
+                    <h3>Opción 4:<br>N contenedores por servicio</h3>
+                    <p>Contenedores: "casi VMs" pero mucho más escalables y prácticos.</p>
+                </section>
 
-                    <p>opcion 4: N containers/docker por servicio</p>
-                    <p>explicación de containers</p>
-                    <p>containers vs vms (incluir tema de efimero vs long lived)</p>
-                    <p>Demo docker</p>
-                    <p>Demo docker-compose</p>
+                <section>
+                    <img src="static/img/containers.png" style="width: 10%" />
+                    <p>Qué es un <strong>Contenedor?</strong></p>
+                    <p class="fragment">Un contenedor es un <strong>proceso aislado</strong>, con su propio filesystem, red, etc.</p>
+                    <p class="fragment">Se puede correr en cualquier <strong>Linux(*)</strong> que tenga el runtime de contenedores (ej: Docker).</p>
+                    <p class="fragment">Se crea a partir de una <strong>Imagen</strong>.</p>
+                    <p class="fragment" style="font-size: 0.4em">(*) Windows y MacOS corren contenedores dentro de una VM Linux.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/containers.png" style="width: 10%" />
+                    <p>Qué es una <strong>Imagen?</strong></p>
+                    <p class="fragment">Es un <strong>"molde"</strong> que se usa para crear contenedores: tiene todos los archivos y configs necesarias para ello.</p>
+                    <p class="fragment">Se construye compilando un <strong>Dockerfile</strong>: archivo de instrucciones de cómo construir una imagen.</p>
+                </section>
+
+                <section>
+                    <p>Ej: quiero correr mi app web en un contenedor. Qué hago?</p>
+                </section>
+
+                <section>
+                    <h3>1: Escribo un Dockerfile</h3>
+                    <p class="fragment">Contiene las instrucciones de cómo construir la imagen con todo lo que mi app necesita dentro: dependencias, archivos de código, etc.</p>
+                </section>
+
+                <section>
+                    <h3>2: Compilamos el Dockerfile creando la Imagen</h3>
+                    <p class="fragment">Le pedimos a Docker que compile ese Dockerfile, y como resultado obtenemos una Imagen lista para usar.</p>
+                </section>
+
+                <section>
+                    <h3>3: Creamos Contenedores con la Imagen</h3>
+                    <p class="fragment">Teniendo la Imagen podemos crear todos los Contenedores nuevos que queramos, usándola como molde.</p>
+                    <p class="fragment">Cada contenedor es como una "mini VM" corriendo e independiente (sus archivos, red, etc).</p>
+                </section>
+
+
+                <section>
+                    <img src="static/img/servers.png" style="width: 10%" />
+                    <img src="static/img/containers.png" style="width: 10%" />
+                    <h3>VMs vs Contenedores</h3>
+                    <p class="fragment">Pueden sonar parecidos: ambos sirven para correr algo de forma aislada.</p>
+                    <p class="fragment">Pero en la práctica son <strong>muy diferentes</strong>.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/servers.png" style="width: 5%" />
+                    <img src="static/img/vms_arch.png" style="width: 80%" />
+                </section>
+
+                <section>
+                    <img src="static/img/containers.png" style="width: 5%" />
+                    <img src="static/img/containers_arch.png" style="width: 80%" />
+                </section>
+
+                <section>
+                    <img src="static/img/servers.png" style="width: 10%" />
+                    <img src="static/img/containers.png" style="width: 10%" />
+                    <p><strong>Primera diferencia grande</strong>: <span style="color: #b0ed2b">performance</span>.</p>
+                    <ul>
+                        <li class="fragment">Los contenedores son mucho más livianos: no tienen un sistema operativo dentro!</li>
+                        <li class="fragment">En el mismo HW que corríamos un puñado de VMs, ahora podemos correr cientos de contenedores.</li>
+                        <li class="fragment">Podemos levantar contenedores en instantes, muchísimo más rápido que encender VMs.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/servers.png" style="width: 10%" />
+                    <img src="static/img/containers.png" style="width: 10%" />
+                    <p><strong>Segunda diferencia grande</strong>: <span style="color: #b0ed2b">moldes livianos</span>.</p>
+                    <ul>
+                        <li class="fragment">Fáciles de distribuir! Las imágenes no pesan nada: solo lo que la app requiere, no todo un OS (ej: mandar la imagen a prod, o compartirla públicamente, etc).</li>
+                        <li class="fragment">Compilar la imagen es super rápido: no hace falta instalar todo un OS.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/servers.png" style="width: 10%" />
+                    <img src="static/img/containers.png" style="width: 10%" />
+                    <p><strong>Tercera diferencia grande</strong>: <span style="color: #b0ed2b">fácil reutilización</span>.</p>
+                    <ul>
+                        <li class="fragment">Un Dockerfile puede decir "partí de tal Imagen conocida". Reaprovechamos cosas hechas!</li>
+                        <li class="fragment">Hay muuuuchas imágenes públicas con todo tipo de cosas que podemos necesitar (DBs, frameworks, etc).</li>
+                        <li class="fragment">Las recetas (Dockerfiles) ahora son ejecutables y estandarizadas, muchas en internet!</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/servers.png" style="width: 10%" />
+                    <img src="static/img/containers.png" style="width: 10%" />
+                    <p><strong>Diferencia importante en el uso</strong>: <span style="color: #b0ed2b">mascotas vs ganado</span>.</p>
+                    <ul>
+                        <li class="fragment">La idea no es tener máquinas long lived, sino contenedores efímeros: creamos y matamos on demand, solo importa la cantidad.</li>
+                        <li class="fragment">Los contenedores entonces <strong>no tienen que guardar los datos!! (ej: DB)</strong></li>
+                        <li class="fragment">Dónde guardamos? Fuera de los contenedores, en disco que pueden acceder ("volúmenes").</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/play.png" style="width: 20%" />
+                    <h3>Demo</h3>
+                    <p>Docker y orquestador.</p>
+                    <p><a href="https://github.com/fisadev/tap/tree/main/docker_examples">Código en el repo</a></p>
+                </section>
+
+                <section>
+                    <p>TODO slides (borrador de slides faltantes):</p>
                     <p>escalabilidad en cada capa (db, app, http)</p>
                 </section>
 
