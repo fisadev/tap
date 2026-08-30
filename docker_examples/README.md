@@ -104,7 +104,13 @@ docker compose up
 Y podemos hacer super magia: escalar los servicios a la cantidad que necesitemos! (con o sin `--no-start`)
 
 ```
-docker compose up --no-start --scale web=25
+docker compose up --no-start --scale web=5
 ```
 
 Incluso podemos matar contenedores corriendo, o levantar nuevos, y el load balancer va a simplemente seguir usando los que queden vivos.
+
+Y nos animamos a mucho?...
+
+```
+docker compose up --no-start --scale web=100
+```
