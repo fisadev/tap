@@ -1,0 +1,11 @@
+[project]
+name = "ejemplo-docker-actual"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flask>=3.1.2",
+    "hrid>=0.3.0",
+    "requests>=2.32.5",
+]
