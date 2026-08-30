@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+
+        <title>TAP | Escalabilidad y Virtualización</title>
+
+        <link rel="stylesheet" href="static/reveal_js/reset.css" />
+        <link rel="stylesheet" href="static/reveal_js/reveal.css" />
+        <link rel="stylesheet" href="static/reveal_js/theme/night.css" />
+
+        <!-- Theme used for syntax highlighted code -->
+        <link rel="stylesheet" href="static/reveal_js/plugin/highlight/monokai.css" />
+        <!-- My style overrides -->
+        <link rel="stylesheet" href="static/my_styles.css" />
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h2>Escalabilidad y Virtualización</h2>
+                    <p>Tópicos Avanzados de Programación</p>
+                </section>
+
+                <section>
+                    <img src="static/img/deploy.png" style="width: 20%" />
+                    <h2>Corriendo en prod</h2>
+                    <p>Cómo?</p>
+                </section>
+
+                <section>
+                    <p>En esta clase:</p>
+                    <p class="fragment">Cómo correr una app aislada y escalable.</p>
+                    <p>En la próxima clase:</p>
+                    <p class="fragment">Infraestructura moderna donde correr la app.</p>
+                </section>
+                
+                <section>
+                    <p>Qué es lo que necesitamos correr? (ej: para una app web)</p>
+                    <ul>
+                        <li class="fragment">Una app web? Muchas?</li>
+                        <li class="fragment">Una base de datos.</li>
+                        <li class="fragment">Cola de tareas en background?</li>
+                        <li class="fragment">Más cosas?...</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/monolith_vs_microservices.png" style="width: 20%" />
+                    <h3>Monolitos vs Microservicios</h3>
+                </section>
+
+                <section>
+                    <img src="static/img/monolith.png" style="width: 10%" />
+                    <p>Qué es un <strong>monolito?</strong></p>
+                    <ul>
+                        <li class="fragment">Una sola app que hace todo.</li>
+                        <li class="fragment">Un solo repositorio, un solo deploy, una DB.</li>
+                        <li class="fragment">Seguramente separada en "módulos".</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/microservices.png" style="width: 10%" />
+                    <p>Qué son <strong>microservicios?</strong></p>
+                    <ul>
+                        <li class="fragment">Los módulos ahora son servicios separados.</li>
+                        <li class="fragment">Repos, deploys y DBs <strong>independientes</strong>.</li>
+                        <li class="fragment">Normalmente se comunican por <strong>APIs web</strong>.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/monolith_vs_microservices.png" style="width: 20%" />
+                    <p>Qué conviene?</p>
+                    <p class="fragment">No hay uno "mejor" que el otro! Depende <strong>mucho</strong> del contexto.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/microservices.png" style="width: 10%" />
+                    <p>Microservicios:</p>
+                    <div class="columns">
+                    <p class="fragment" style="color: #b0ed2b">✅ Independencia de equipos, deploys, roadmaps, escalabilidad, tolerancia a fallas.</p>
+                    <p class="fragment" style="color: #fc035e">❌ Overhead de trabajo, código, infra requerida, performance, complejidad, consistencia de datos.</p>
+                    </div>
+                    <p class="fragment">Rinden cuando tenemos muchos equipos o servicios con requerimientos muy diferentes.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/monolith.png" style="width: 10%" />
+                    <p>Monolito:</p>
+                    <div class="columns">
+                    <p class="fragment" style="color: #b0ed2b">✅ Sin overhead, performance, simplicidad de deploy e integración.</p>
+                    <p class="fragment" style="color: #fc035e">❌ Difícil de escalar, módulos demasiado atados, dificultad si hay muchos equipos o módulos muy diferentes.</p>
+                    </div>
+                    <p class="fragment">Más sentido en apps chicas/medianas.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/servers.png" style="width: 15%" />
+                    <p>Aunque la app sea un solo servicio, igual siempre corremos varios: app, DBs, web server, etc.</p>
+                    <p>...dónde los corremos?</p>
+                </section>
+
+                <section>
+                    <img src="static/img/server.png" style="width: 15%" />
+                    <h3>Opción 1: una máquina</h3>
+                    <p>Máquina física, o VM contratada en algún proveedor.</p>
+                </section>
+
+                <section>
+                    <p>✅ Simple! pero...</p>
+                </section>
+
+                <section>
+                    <p><strong>Escalar</strong>: si se queda chica?</p>
+                    <p class="fragment">❌ Agrandar la máquina implica reiniciar todo!</p>
+                    <p class="fragment">❌ Techo: no puede crecer infinitamente.</p>
+                    <p class="fragment">❌ HW local: una máquina grande es más cara que varias chicas.</p>
+                </section>
+
+                <section>
+                    <p><strong>Eficiencia</strong>: si diferentes servicios requieren diferente HW?<br>
+                       (ej: app requiere muchos cores, DB requiere un core potente)</p>
+                    <p class="fragment">❌ Imposible escalar solo un servicio: pagamos por capacidad ociosa (ej: muchos cores potentes).</p>
+                    <p class="fragment">❌ Imposible escalar ⬆⬇ automáticamente: no podemos prender/apagar partes del HW de una máquina.</p>
+                </section>
+                
+                <section>
+                    <p><strong>Isolation</strong>: qué tanto puede un servicio afectar a otro?</p>
+                    <p class="fragment">❌ Un mal servicio puede matar toda nuestra app.</p>
+                    <p class="fragment">❌ El manejo de dependencias puede ser un infierno.</p>
+                </section>
+
+                <section>
+                    <p>Igualmente para muchas apps una máquina alcanza y sobra!</p>
+                </section>
+ 
+                <section>
+                    <img src="static/img/servers.png" style="width: 15%" />
+                    <h3>Opción 2: una máquina por servicio</h3>
+                    <p>Máquinas físicas, o VMs contratadas en algún proveedor.</p>
+                </section>
+
+                <section>
+                    <p>Mejora bastante!:</p>
+                    <p class="fragment">✅ HW según el servicio: +escalabilidad, +eficiencia.</p>
+                    <p class="fragment">✅ Isolation: uso de recursos y dependencias por servicio.</p>
+                </section>
+
+                <section>
+                    <p>Pero ojo:</p>
+                    <p class="fragment">❌ Seguimos teniendo un techo por servicio.</p>
+                    <p class="fragment">❌ Seguimos sin poder escalar ⬆⬇ automáticamente: siempre pagamos por el máximo que necesitamos aunque no lo usemos.</p>
+                    <p class="fragment">❌ Un upgrade sigue implicando downtime (de un servicio → app entera?).</p>
+                    <p class="fragment">❌ Overhead! N sistemas operativos corriendo: recursos, administración, red.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/error.png" style="width: 15%" />
+                    <h3>Pequeño desvío: disponibilidad</h3>
+                </section>
+
+                <section>
+                    <img src="static/img/error.png" style="width: 10%" />
+                    <p>Imaginemos que nuestras VMs tienen 95% de uptime.</p>
+                    <p class="fragment">Qué uptime va a tener nuestra app en la opción 1?</p>
+                    <p class="fragment">95%</p>
+                    <p class="fragment">Qué uptime va a tener nuestra app en la opción 2? (asumamos 3 VMs)</p>
+                    <p class="fragment">95% * 95% * 95% = 85%! 😱</p>
+                </section>
+
+                <section>
+                    <p>Separar servicios en máquinas <strong>NO mejora uptime</strong>. Lo empeora!</p>
+                    <p class="fragment">Hay otra forma de usar muchas máquinas que sí mejora el uptime...</p>
+                </section>
+
+                <section>
+                    <img src="static/img/servers.png" style="width: 15%" />
+                    <h3>Opción 3: N máquinas por servicio</h3>
+                    <p>Máquinas físicas, o VMs contratadas en algún proveedor.</p>
+                </section>
+
+                <section>
+                    <p>Mejora mucho más!:</p>
+                    <p class="fragment">✅ Ya no tenemos techo por servicio.</p>
+                    <p class="fragment">✅ Podemos escalar automáticamente: prender/apagar máquinas según demanda, pagando menos.</p>
+                    <p class="fragment">✅ Y escalar sin downtime.</p>
+                    <p class="fragment">✅ Mejora el uptime! Si una VM está caída, otra puede responder (ej: 3 VMs del mismo servicio con 95% de uptime = 99.9%).</p>
+                </section>
+
+                <section>
+                    <p>Pero ojo:</p>
+                    <p class="fragment">❌ El overhead sigue presente, incluso peor.</p>
+                </section>
+
+                <section>
+                    <p>Aparecen dos nuevas necesidades:</p>
+                    <ul>
+                        <li class="fragment"><strong>Balanceo de carga</strong>: cómo repartir las requests/queries/etc entre N nodos.</li>
+                        <li class="fragment"><strong>Orquestación</strong>: cómo encargarse de que los nodos estén corriendo.</li>
+                    </ul>
+                    <p class="fragment">(por ahora, nodo=máquina)</p>
+                </section>
+
+                <section>
+                    <img src="static/img/load_balancing.png" style="width: 15%" />
+                    <h3>Balanceo de carga</h3>
+                </section>
+
+                <section>
+                    <img src="static/img/load_balancing.png" style="width: 10%" />
+                    <p><strong>Balanceador</strong>: servicio que recibe, encola y reparte las peticiones/queries/etc entre varios nodos.</p>
+                    <ul>
+                        <li class="fragment">Resiliencia: si se cae un nodo, el sistema sigue andando.</li>
+                        <li class="fragment">Eficiente: carga repartida entre los nodos.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Hay muchas herramentas para hacerlo, depende del servicio:</p>
+                    <p>Servidores web como NGINX balancean requests, las DBs tienen sus propios balanceadores, etc.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/auto_scaling.png" style="width: 15%" />
+                    <h3>Orquestación / Auto Scaling</h3>
+                </section>
+
+                <section>
+                    <img src="static/img/auto_scaling.png" style="width: 10%" />
+                    <p><strong>Orquestador</strong>: servicio que se encarga de mantener los servicios de nuestra app corriendo.</p>
+                    <ul>
+                        <li class="fragment">Le describimos nuestra app: qué servicios, cuántos nodos, dependencias entre ellos, etc.</li>
+                        <li class="fragment">Con esa info, levanta los nodos y se encarga de mantenerlos vivos.</li>
+                        <li class="fragment">Tiene que tener control sobre la infra: poder monitorear/prender/apagar nodos.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Y puede hacer <strong>auto scaling</strong>!: prender/apagar nodos según demanda.</p>
+                    <ul>
+                        <li class="fragment">Le configuramos reglas: min/max de nodos, qué tan rápido subir/bajar, etc.</li>
+                        <li class="fragment">Tiene que poder medir la demanda o carga.</li>
+                        <li class="fragment">Tiene que informar al balanceador cuando prende/apaga nodos.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/load_balancing.png" style="width: 10%" />
+                    <img src="static/img/auto_scaling.png" style="width: 10%" />
+                    <p>El orquestador y el balanceador pueden ser el mismo servicio, o separados.</p>
+                    <p>Y ambos son <strong>puntos críticos de falla</strong>, que requieren redundancia.</p>
+                </section>
+
+                <section>
+                    <p>Hay todavía un problema importante por resolver:</p>
+                    <p class="fragment" style="color: #fc035e">El overhead de tener N máquinas.</p>
+                </section>
+
+                <section>
+                    <p>TODO slides (borrador de slides faltantes):</p>
+
+                    <p>opcion 4: N containers/docker por servicio</p>
+                    <p>explicación de containers</p>
+                    <p>containers vs vms (incluir tema de efimero vs long lived)</p>
+                    <p>Demo docker</p>
+                    <p>Demo docker-compose</p>
+                    <p>escalabilidad en cada capa (db, app, http)</p>
+                </section>
+
+                <section>
+                    <h2>Preguntas?</h2>
+                </section>
+            </div>
+        </div>
+
+        <script src="static/reveal_js/reveal.js"></script>
+        <script src="static/reveal_js/plugin/notes.js"></script>
+        <script src="static/reveal_js/plugin/markdown.js"></script>
+        <script src="static/reveal_js/plugin/highlight.js"></script>
+        <script src="static/init_slides.js"></script>
+    </body>
+</html>
