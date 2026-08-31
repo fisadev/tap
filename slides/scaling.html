@@ -434,11 +434,9 @@
                 </section>
 
                 <section>
-                    <p>Una app web suele tener 3 capas que nos interesan al escalar:</p>
-                    <p class="fragment"><img src="static/img/cloud_servers.png" style="width: 7%" /> El servidor HTTP.</p>
+                    <p>Una app web suele tener 2 capas que que escalan muy diferente:</p>
                     <p class="fragment"><img src="static/img/application_code.png" style="width: 6%" /> La aplicación en si misma.</p>
                     <p class="fragment"><img src="static/img/storage.png" style="width: 5%" /> La base de datos.</p>
-                    <p class="fragment">Y escalan bastante diferente.</p>
                 </section>
 
                 <section>
@@ -467,15 +465,21 @@
                         <li class="fragment">DBs iguales? (réplica) → sincronización!</li>
                         <li class="fragment">DBs diferentes? (particionar) → complejidad de queries!</li>
                     </ul>
-                    <p class="fragment">Ambas opciones son difíciles de hacer bien y traen bastantes sub problemas a resolver.</p>
+                    <p class="fragment">❌ Ambas opciones son difíciles de hacer bien y traen bastantes sub problemas a resolver.</p>
                 </section>
 
                 <section>
-                    <p>Si podemos, a la DB preferimos escalarla verticalmente (un nodo más grande).</p>
+                    <p>✅ Si podemos, a la DB preferimos escalarla verticalmente (un nodo más grande).</p>
                     <p class="fragment">Excepción: solo muchas lecturas? Réplicas de solo lectura! (no tan difícil como réplicas con escritura)</p>
                 </section>
 
                 <section>
+                    <p>Además, si vamos por una opción con múltiples nodos... cómo balanceamos la carga?</p>
+                    <p class="fragment">Depende mucho de la DB, suelen tener su propio sistema para ello.</p>
+                </section>
+
+                <section>
+                    <p>Ok, vamos por agrandar el nodo.</p>
                     <p>...pero qué es "grande"? Qué componente de HW nos importa más?</p>
                 </section>
 
@@ -505,8 +509,68 @@
                     <p class="fragment">Pero solo caer en esto si no tenemos otra opción! La desnormalización trae sus propios problemas...</p>
                 </section>
 
+                <section>
+                    <img src="static/img/application_code.png" style="width: 15%" />
+                    <h3>Escalando la aplicación</h3>
+                    <p>La parte fácil.</p>
+                </section>
 
+                <section>
+                    <p>El nodo que corre nuestra app se está quedando chico, qué hacemos?<br>
+                        (y no es problema de mal código)</p>
+                    <ul>
+                        <li class="fragment">Escalar horizontalmente? (agregar más nodos).</li>
+                        <li class="fragment">Escalar verticalmente? (agrandar el nodo).</li>
+                    </ul>
+                </section>
 
+                <section>
+                    <p>Era más eficiente y barato tener muchos nodos. En esta capa hay algo que lo impida?</p>
+                    <p class="fragment">Dónde se guardan las <strong>sesiones</strong>?</p>
+                </section>
+
+                <section>
+                    <p>Sesiones en RAM?</p>
+                    <p class="fragment">❌ Se rompe!</p>
+                    <p class="fragment">❌ Si las requests le pueden caer a cualquier nodo, cómo hacemos que todos los nodos tengan la data actualizada de una sesión? (sincronizar RAM sería una locura)</p>
+                </section>
+
+                <section>
+                    <p>Sesiones en la DB?</p>
+                    <p class="fragment">❌ Funciona, pero muy rápido sobrecarga la DB!</p>
+                    <p class="fragment">❌ Cada nodo que recibe una request va a tener que pegarle a la DB para traerse la sesión.</p>
+                </section>
+
+                <section>
+                    <p>Solución ideal: <span style="color: #b0ed2b">servidor de sesiones</span>.</p>
+                    <p class="fragment">✅ Un Redis, Memcached o similar, que mantenga las sesiones en RAM.</p>
+                    <p class="fragment">✅ Son super rápidos, no le pegamos a la DB, y no dependemos de a qué nodo le cae la request.</p>
+                </section>
+
+                <section>
+                    <p>✅ Si tenemos eso y los nodos de la app no guardan datos dentro (contenedores efímeros!), entonces es <strong>muy fácil</strong> escalar horizontalmente.</p>
+                    <p class="fragment">Simplemente agregamos más nodos y el load balancer se encarga del resto!</p>
+                </section>
+
+                <section>
+                    <img src="static/img/apis.png" style="width: 15%" />
+                    <h3>Escalando más cosas</h3>
+                    <p>Scale all the things!</p>
+                </section>
+                 
+                <section>
+                    <p>El servidor HTTP? (NGINX, Apache, etc).</p>
+                    <p class="fragment">Lo que está entre los nodos que corren nuestra app y el mundo (balancea carga, encripta, etc).</p>
+                    <p class="fragment">✅ NGINX se aguanta <strong>muchísimo</strong> tráfico, es muy raro tener que escalarlo.</p>
+                    <p class="fragment">✅ Y le podemos sacar carga derivando nuestro contenido estático a una <strong>CDN</strong>.</p>
+                    <p class="fragment">Si aún así no alcanza... felicitaciones, son millonarios :)</p>
+                </section>
+
+                <section>
+                    <p>Tareas programadas o en background?</p>
+                    <p class="fragment">✅ Hay sistemas de encolado y ejecución de tareas ("jobs") o incluso workflows, que se encargan de escalar los workers automáticamente.</p>
+                    <p class="fragment">✅ Suele no hacer falta un balanceador, sino que al revés: cada worker "pide" más trabajo cuando está libre.</p>
+                </section>
 
                 <section>
                     <h2>Preguntas?</h2>
