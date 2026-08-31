@@ -124,7 +124,7 @@
                     <p><strong>Escalar</strong>: si se queda chica?</p>
                     <p class="fragment">❌ Agrandar la máquina implica reiniciar todo!</p>
                     <p class="fragment">❌ Techo: no puede crecer infinitamente.</p>
-                    <p class="fragment">❌ HW local: una máquina grande es más cara que varias chicas.</p>
+                    <p class="fragment">❌ Una máquina grande suele ser más cara que varias chicas.</p>
                 </section>
 
                 <section>
@@ -429,9 +429,84 @@
                 </section>
 
                 <section>
-                    <p>TODO slides (borrador de slides faltantes):</p>
-                    <p>escalabilidad en cada capa (db, app, http)</p>
+                    <img src="static/img/layers.png" style="width: 15%" />
+                    <h3>Escalando cada capa</h3>
                 </section>
+
+                <section>
+                    <p>Una app web suele tener 3 capas que nos interesan al escalar:</p>
+                    <p class="fragment"><img src="static/img/cloud_servers.png" style="width: 7%" /> El servidor HTTP.</p>
+                    <p class="fragment"><img src="static/img/application_code.png" style="width: 6%" /> La aplicación en si misma.</p>
+                    <p class="fragment"><img src="static/img/storage.png" style="width: 5%" /> La base de datos.</p>
+                    <p class="fragment">Y escalan bastante diferente.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/storage.png" style="width: 10%" />
+                    <h3>Escalando la DB</h3>
+                    <p>La parte difícil...</p>
+                </section>
+
+                <section>
+                    <p>La DB está lenta, qué hacemos?</p>
+                    <p class="fragment"><strong>Antes de escalar nada</strong>, las cosas básicas: índices y caché. No tiene sentido escalar una DB subóptima, o escalar queries que podríamos evitar.</p>
+                    <p class="fragment">Si eso ya está bien hecho, entonces sí...</p>
+                </section>
+
+                <section>
+                    <p>El nodo (VM, container, máquina física) de la DB se quedó chico, qué hacemos?</p>
+                    <ul>
+                        <li class="fragment">Escalar horizontalmente? (agregar más nodos).</li>
+                        <li class="fragment">Escalar verticalmente? (agrandar el nodo).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Hasta ahora escalar horizontalmente parecía mejor y más barato... Pero con la DB hay un <span style="color: #fc035e">problema</span>: dónde va la data cuando hay varias DBs?</p>
+                    <ul>
+                        <li class="fragment">DBs iguales? (réplica) → sincronización!</li>
+                        <li class="fragment">DBs diferentes? (particionar) → complejidad de queries!</li>
+                    </ul>
+                    <p class="fragment">Ambas opciones son difíciles de hacer bien y traen bastantes sub problemas a resolver.</p>
+                </section>
+
+                <section>
+                    <p>Si podemos, a la DB preferimos escalarla verticalmente (un nodo más grande).</p>
+                    <p class="fragment">Excepción: solo muchas lecturas? Réplicas de solo lectura! (no tan difícil como réplicas con escritura)</p>
+                </section>
+
+                <section>
+                    <p>...pero qué es "grande"? Qué componente de HW nos importa más?</p>
+                </section>
+
+                <section>
+                    <img src="static/img/storage.png" style="width: 10%" />
+                    <p>Al escalar la DB, <strong>RAM suele ser lo más importante!</strong></p>
+                    <p class="fragment">La RAM es cientos de veces más rápida que el disco.</p>
+                    <p class="fragment">Idealmente: correr queries sin leer disco, con datos en RAM.</p>
+                    <p class="fragment">+RAM → -lecturas de disco → queries +rápidas.</p>
+                </section>
+
+                <section>
+                    <p>Si no hay forma de que la RAM alcance, entonces sí, el disco pasa a importar (usar NVMe, etc).</p>
+                </section>
+
+                <section>
+                    <img src="static/img/storage.png" style="width: 10%" />
+                    <p>Cuando la RAM alcanza, el segundo más importante es <strong>el CPU.</strong></p>
+                    <p class="fragment">Queries complejas requieren mucho CPU.</p>
+                    <p class="fragment">Cores +rápidos → queries +rápidas.</p>
+                    <p class="fragment">+Cores → +queries en simultáneo.</p>
+                </section>
+
+                <section>
+                    <p>Y cuando eso no es suficiente...</p>
+                    <p class="fragment"><strong>Desnormalizar datos</strong> puede reducir mucho el costo de queries.</p>
+                    <p class="fragment">Pero solo caer en esto si no tenemos otra opción! La desnormalización trae sus propios problemas...</p>
+                </section>
+
+
+
 
                 <section>
                     <h2>Preguntas?</h2>
