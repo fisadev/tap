@@ -542,13 +542,20 @@
                 </section>
 
                 <section>
-                    <p>Solución ideal: <span style="color: #b0ed2b">servidor de sesiones</span>.</p>
+                    <p>Solución ideal 1: <span style="color: #b0ed2b">servidor de sesiones</span>.</p>
                     <p class="fragment">✅ Un Redis, Memcached o similar, que mantenga las sesiones en RAM.</p>
                     <p class="fragment">✅ Son super rápidos, no le pegamos a la DB, y no dependemos de a qué nodo le cae la request.</p>
                 </section>
 
                 <section>
-                    <p>✅ Si tenemos eso y los nodos de la app no guardan datos dentro (contenedores efímeros!), entonces es <strong>muy fácil</strong> escalar horizontalmente.</p>
+                    <p>Solución ideal 2: <span style="color: #b0ed2b">en las cookies mismas</span>.</p>
+                    <p class="fragment">✅ En lugar de que la cookie solo guarde un ID, guardamos todo lo que necesitamos.</p>
+                    <p class="fragment">✅ Tiene que estar encriptada!!</p>
+                    <p class="fragment">❌ Hay límites de cuánto pueden guardar.</p>
+                </section>
+
+                <section>
+                    <p>✅ Si usamos alguna de esas dos opciones y los nodos de la app no guardan datos dentro (contenedores efímeros!), entonces es <strong>muy fácil</strong> escalar horizontalmente.</p>
                     <p class="fragment">Simplemente agregamos más nodos y el load balancer se encarga del resto!</p>
                 </section>
 
