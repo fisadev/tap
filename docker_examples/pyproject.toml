@@ -1,7 +1,7 @@
 [project]
 name = "ejemplo-docker-actual"
 version = "0.1.0"
-description = "Add your description here"
+description = "Ejemplo mínimo para correr con Docker"
 requires-python = ">=3.10"
 dependencies = [
     "flask>=3.1.2",
