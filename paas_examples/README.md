@@ -10,6 +10,7 @@ La app:
 - Escucha en `0.0.0.0`, en el puerto que le indica el PaaS con la variable `PORT` (en Render, 10000 por defecto).
 - Escribe logs a la salida estándar (con el módulo `logging`) en cada vista.
 - Tiene `/slow` (tarda 2 segundos) y `/error` (falla con un 500), para tener algo que mirar en logs y métricas.
+- Guarda textos en una base de datos Postgres: `/save/loquesea/` guarda, `/things` muestra lo guardado. La tabla se crea sola al arrancar la app.
 
 ## Probarla localmente (opcional)
 
@@ -19,6 +20,8 @@ Parados en esta carpeta (`paas_examples/`, la que tiene el Dockerfile):
 docker build -t my_paas_web .
 docker run --rm -p 5000:5000 my_paas_web
 ```
+
+Sin `DATABASE_URL`, la app arranca igual: andan todas las vistas menos las dos que usan la db.
 
 ## Deployarla en Render
 
@@ -31,6 +34,16 @@ docker run --rm -p 5000:5000 my_paas_web
 4. Deploy Web Service. Render construye la imagen, la corre, y en un rato nos da una URL con HTTPS.
 
 El **Root Directory** hace dos cosas: todo lo demás (el Dockerfile, el contexto del build) se busca relativo a esa carpeta, y los deploys automáticos se disparan solo si el push toca archivos de adentro.
+
+## Agregarle una base de datos
+
+1. En Render: **+ New → Postgres**. Elegir un nombre, la **misma región** que el web service, y **Tipo de instancia**: Free.
+2. Cuando esté lista, en la página de la db: sección **Connect → Internal Database URL**, y copiar esa URL.
+   (La *internal* solo funciona entre servicios de Render de la misma región, y va por la red privada. La *external* es la que usaríamos para conectarnos desde afuera, por ejemplo desde nuestra máquina.)
+3. En el web service: pestaña **Environment** → agregar la variable `DATABASE_URL` con esa URL → click en Save, Rebuild and Deploy.
+4. Cuando termine el deploy, probar `/save/loquesea/` y `/things`.
+
+⚠️ La Postgres gratuita de Render **expira a los 30 días** de creada (después hay 14 días para pasarla a un plan pago, y si no se borra). Además solo se puede tener **una** activa por workspace, con 1 GB y sin backups. Sirve para probar, no para algo que queramos conservar.
 
 Cosas para probar una vez deployada:
 
