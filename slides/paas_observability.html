@@ -204,11 +204,25 @@
                         ...
                     </code></pre>
                 </section>
+
                 <section>
-                    <p>Y al correr, le pasamos los valores para las variables de entorno al contenedor:</p>
+                    <p>Suele ser común tener valores por default, que son los que usamos al correr localmente en desarrollo:</p>
+                    <pre class="fragment"><code class="hljs bash" data-trim data-line-numbers>
+                        # ejemplo en python
+                        import os
+                        db = DataBase.connect(
+                            host=os.environ.get("DB_HOST", "localhost"),
+                            password=os.environ.get("DB_PASSWORD", "1234"),
+                        )
+                        ...
+                    </code></pre>
+                </section>
+
+                <section>
+                    <p>Y al correr en los otros entornos, le pasamos los valores para las variables al contenedor:</p>
                     <pre class="fragment"><code class="hljs bash" data-trim data-line-numbers>
                         # una por una a mano
-                        docker run -e DB_HOST=prod.db.com -e DB_PASSWORD=1234 mi-web
+                        docker run -e DB_HOST=prod.db.com -e DB_PASSWORD=5678 mi-web
 
                         # o mejor, desde un archivo
                         docker run --env-file .env mi-web
@@ -444,7 +458,7 @@
                 </section>
 
                 <section>
-                    <img src="static/img/inspect.png" style="width: 15%" />
+                    <img src="static/img/inspect.png" style="width: 20%" />
                     <h3>Observabilidad</h3>
                     <p>La app está deployada. Cómo sabemos si anda bien?</p>
                 </section>
@@ -457,6 +471,359 @@
                     <p class="fragment">Si no miramos nosotros, nos enteramos por los usuarios: "no me anda la app" 😱.</p>
                 </section>
 
+                <section>
+                    <img src="static/img/inspect.png" style="width: 10%" />
+                    <p><strong>Observabilidad</strong>: poder entender qué está pasando dentro de nuestro sistema, mirando las cosas que reporta.</p>
+                    <p class="fragment">Tenemos que <strong>preparar</strong> el sistema para eso, no es gratis ni sale "solo instalando algo".</p>
+                </section>
+
+                <section>
+                    <p>Hay tres tipos de información a recolectar:</p>
+                    <ul>
+                        <li class="fragment">Logs.</li>
+                        <li class="fragment">Métricas (con sus dashboards y alertas).</li>
+                        <li class="fragment">Traces.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/history.png" style="width: 15%" />
+                    <h3>Logging</h3>
+                    <p>Un registro de lo que va pasando.</p>
+                </section>
+
+                <section>
+                    <p>Un <strong>log</strong> es una línea de texto que la app escribe cada vez que pasa algo interesante.</p>
+                    <pre class="fragment"><code class="hljs" data-trim data-line-numbers>
+                        2026-09-21 14:05:12 INFO  Pedido 4521 creado por usuario 87
+                        2026-09-21 14:05:13 WARN  Pago del pedido 4521 tardó 4.2s
+                        2026-09-21 14:05:15 ERROR Falló envío de mail del pedido 4521
+                    </code></pre>
+                    <p class="fragment">Cada uno tiene un <strong>nivel</strong>: indica su importancia.</p>
+                </section>
+
+                <section>
+                    <p>Niveles típicos:</p>
+                    <ul>
+                        <li class="fragment"><strong>CRITICAL</strong>: el sistema entero está en peligro.</li>
+                        <li class="fragment"><strong>ERROR</strong>: algo falló.</li>
+                        <li class="fragment"><strong>WARNING</strong>: algo raro, pero seguimos andando.</li>
+                        <li class="fragment"><strong>INFO</strong>: cosas normales importantes (un pedido creado, un deploy, etc).</li>
+                        <li class="fragment"><strong>DEBUG</strong>: data para debuguear localmente que no queremos loguear en prod.</li>
+                    </ul>
+                    <p class="fragment">Con eso podemos elegir cuánto ver: en prod, por ejemplo, desde INFO para arriba.</p>
+                </section>
+
+                <section>
+                    <p>Buenas prácticas:</p>
+                    <ul>
+                        <li class="fragment">Usar la librería de logging del lenguaje, no <code>prints</code>: da niveles y formato.</li>
+                        <li class="fragment">Escribir a la <strong>salida estándar</strong> (stdout): en contenedores es lo esperado, y la plataforma se encarga de recolectarlo.</li>
+                        <li class="fragment">Loguear con <strong>contexto</strong>: ids de request, de usuario, de pedido. "Falló algo" no sirve para nada.</li>
+                        <li class="fragment">❌ Nunca loguear passwords, tokens, tarjetas ni datos personales innecesarios (privacidad!).</li>
+                        <li class="fragment">Ni pocos ni demasiados: sin logs estamos ciegos, con demasiados el ruido ahoga la info útil.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Con muchos nodos efímeros, dónde miramos los logs?</p>
+                    <p class="fragment">❌ Si un contenedor muere, sus logs desaparecen.</p>
+                    <p class="fragment">❌ Conectarse a cada nodo para leer archivos no escala.</p>
+                    <p class="fragment">✅ Logs <strong>centralizados</strong>: todos los nodos los mandan a un sistema que los guarda y permite buscar.</p>
+                </section>
+
+                <section>
+                    <p>Herramientas típicas:</p>
+                    <ul>
+                        <li class="fragment">Las que ya trae el PaaS o la nube (ej: CloudWatch, Cloud Logging). Lo más simple para empezar.</li>
+                        <li class="fragment">Grafana Loki, ELK/OpenSearch (basado en Elasticsearch), y otros que podemos instalar y correr en nuestra infra.</li>
+                        <li class="fragment">Servicios pagos: Datadog, Better Stack, etc.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/logs_clock.png" style="width: 15%" />
+                    <p>Cuánto tiempo guardamos los logs?</p>
+                    <p class="fragment">Es una decisión de costo vs necesidad (y a veces legal).</p>
+                </section>
+
+                <section>
+                    <img src="static/img/play.png" style="width: 20%" />
+                    <h3>Demo</h3>
+                    <p>Mirando los logs de la app que deployamos hace un ratito.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/bug.png" style="width: 20%" />
+                    <p>Los <strong>errores</strong> merecen un tratamiento especial.</p>
+                </section>
+
+                <section>
+                    <p>Hay herramientas de <strong>error tracking</strong> (ej: Sentry): capturan las excepciones no manejadas y las agrupan.</p>
+                    <ul>
+                        <li class="fragment">Stack trace completo, versión del código, datos del usuario y de la request.</li>
+                        <li class="fragment">"Este error pasó 340 veces, a 12 usuarios, desde el último deploy".</li>
+                        <li class="fragment">Avisan cuando aparece un error nuevo.</li>
+                    </ul>
+                    <p class="fragment">Fáciles de integrar, y valiosas desde el día uno.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/speed.png" style="width: 30%" />
+                    <h3>Métricas</h3>
+                    <p>Medir el comportamiento de la app.</p>
+                </section>
+
+                <section>
+                    <p>Los logs cuentan <strong>qué pasó</strong>. Las <strong>métricas</strong> miden <strong>cuánto</strong>.</p>
+                    <p class="fragment">Son valores numéricos guardados con su timestamp, formando una <strong>serie de tiempo</strong>.</p>
+                </section>
+
+                <section>
+                    <p>Qué se mide?</p>
+                    <ul>
+                        <li class="fragment"><strong>Del sistema</strong>: CPU, RAM, disco, red...</li>
+                        <li class="fragment"><strong>De la app</strong>: requests por segundo, latencia, errores, largo de la cola de tareas, conexiones a la DB...</li>
+                        <li class="fragment"><strong>De negocio</strong>: posts por hora, pedidos, pagos fallidos...</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>No podemos ver lo mismo con los logs?</p>
+                    <p class="fragment">Sí, peeeero...</p>
+                    <p class="fragment">✅ Son mucho más baratas: guardan números agregados, no cada evento.</p>
+                    <p class="fragment">✅ Son mucho más fáciles de consultar y graficar → más fácil entender estado, diagnosticar problemas, etc.</p>
+                    <p class="fragment">✅ Es más fácil crear alertas con sus valores.</p>
+                </section>
+
+                <section>
+                    <p>Tiempo promedio de respuesta: 200ms. Todo bien?</p>
+                    <p class="fragment">Puede ser que el 99% responda en 50ms, y el 1% en 15 segundos. El promedio esconde casos malos.</p>
+                    <p class="fragment">✅ Mirar <strong>percentiles</strong>: p50 (lo típico), p95, p99 (los peores casos).</p>
+                    <p class="fragment">"p99 = 2s" significa que el 99% de las requests tardó 2s o menos.</p>
+                </section>
+
+                <section>
+                    <p>Cómo llegan las métricas a un sistema central? Dos opciones:</p>
+                    <ul>
+                        <li class="fragment">Una url en la app las expone (ej: <code>/metrics</code>) y una herramienta las consulta cada tanto: Prometheus.</li>
+                        <li class="fragment">O las recolectamos y enviamos desde la app hacia la herramienta, usando su lib (ej: <code>dd.send_metric("queue_size", 4)</code>): Datadog, CloudWatch, etc.</li>
+                    </ul>
+                    <p class="fragment">Los PaaS y las nubes ya reportan las básicas (CPU, RAM, requests) sin hacer nada.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/auto_scaling.png" style="width: 25%" />
+                    <h3>Dashboards</h3>
+                    <p>Ver la salud del sistema de un vistazo.</p>
+                </section>
+
+                <section>
+                    <p>Un <strong>dashboard</strong> es una pantalla con gráficos de métricas (y a veces logs), que se actualiza en tiempo real.</p>
+                    <p class="fragment">Herramientas típicas: <strong>Grafana</strong> (la más usada, con muchas fuentes), y los dashboards de Datadog, CloudWatch, etc.</p>
+                </section>
+
+                <section>
+                    <p>Un buen dashboard:</p>
+                    <ul>
+                        <li class="fragment">Responde <strong>"está todo bien?"</strong> en segundos.</li>
+                        <li class="fragment">Tiene pocos gráficos claros, no 80 que nadie entiende.</li>
+                        <li class="fragment">Permite filtrar, elegir rango de fechas, etc (ej: "quiero ver la RAM de ayer en dev").</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Los dashboards sirven para <strong>mirar</strong>, pero nadie va a estar mirando las 24hs.</p>
+                    <p class="fragment">Si algo está roto, necesitamos que el sistema nos avise solo...</p>
+                </section>
+
+                <section>
+                    <img src="static/img/alarm.png" style="width: 25%" />
+                    <h3>Alertas</h3>
+                    <p>Por favor no a las 3am...</p>
+                </section>
+
+                <section>
+                    <p>Una <strong>alerta</strong> es una regla sobre una métrica: si se cumple durante un tiempo, se manda una notificación.</p>
+                    <pre class="fragment"><code class="hljs" data-trim data-line-numbers>
+                        - alert: MuchosErrores
+                          expr: |
+                            sum(rate(http_requests_total{status=~"5.."}[5m]))
+                            / sum(rate(http_requests_total[5m])) > 0.05
+                          for: 5m
+                          annotations:
+                            summary: "Más del 5% de las requests dan error"
+                    </code></pre>
+                    <p class="fragment" style="font-size: 0.7em">(Ej: Prometheus. Casi todas las herramientas permiten reglas parecidas.)</p>
+                </section>
+
+                <section>
+                    <p>Alertar sobre <strong>síntomas</strong> (lo que sufren los usuarios), no sobre causas.</p>
+                    <p class="fragment">❌ "CPU al 90%": puede estar perfecto, o no. No sabemos si es un problema.</p>
+                    <p class="fragment">✅ "5% de errores" o "latencia p95 > 2s": es un problema para los usuarios, hay que actuar.</p>
+                    <p class="fragment">Las causas se investigan después, con dashboards, logs y traces.</p>
+                </section>
+
+                <section>
+                    <p>Ojo con la <strong>fatiga de alertas</strong>!</p>
+                    <ul>
+                        <li class="fragment">50 alertas por semana y casi todas son falsas? el equipo aprende a ignorarlas... y la que importaba se pierde!</li>
+                        <li class="fragment">Regla: toda alerta tiene que ser <strong>urgente</strong> y <strong>accionable</strong>. Si no, no debería ser una alerta.</li>
+                        <li class="fragment">Lo que no es urgente va a un canal (Slack, mail) para mirar en horario laboral.</li>
+                        <li class="fragment">Nunca tener "alerta de todo está bien".</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Y lo urgente, a quién le llega?</p>
+                    <ul>
+                        <li class="fragment"><strong>On-call</strong>: guardias rotativas, una persona del equipo es responsable de responder (puede pedir ayuda!).</li>
+                        <li class="fragment">Herramientas como PagerDuty u Opsgenie mandan la alerta por chat, llamada, etc, y escalan a otra persona si nadie responde.</li>
+                        <li class="fragment"><strong>Runbooks</strong>: la alerta incluye un link a un documento de "qué hacer si esto pasa", así no hay que pensar a las 3am.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/tracing.png" style="width: 25%" />
+                    <h3>Tracing</h3>
+                    <p>El recorrido de una request.</p>
+                </section>
+
+                <section>
+                    <p>Las métricas nos dicen: "en general las cosas están así".</p>
+                    <p class="fragment">Los logs nos dicen: "pasó esto y esto otro", pero mezclados con los de todas las demás requests.</p>
+                    <p class="fragment">Pero <strong>por qué</strong> fue lenta <strong>esta</strong> request puntual? Dónde se fue su tiempo?</p>
+                    <p class="fragment">Solución: <strong>traces</strong>!</p>
+                </section>
+
+                <section>
+                    <img src="static/img/speed.png" style="width: 10%" />
+                    <p>Se parece bastante al <strong>profiling</strong> que vimos, pero pensado para producción.</p>
+                    <p class="fragment">Un <strong>trace</strong> registra todo el recorrido de una request: cada paso que dio, cuánto tardó cada uno, y sus logs asociados.</p>
+                </section>
+
+                <section>
+                    <p>Cada paso se llama <strong>span</strong>: una operación con un inicio, una duración, y datos asociados.</p>
+                    <p class="fragment">Los spans se anidan, y todos juntos forman el trace de la request.</p>
+                </section>
+
+                <section>
+                    <p>Ej: una request a <code>GET /pedidos/42</code></p>
+                    <pre class="fragment"><code class="hljs text" data-trim>
+                        GET /pedidos/42             ████████████████████████   480ms
+                         ├─ validar sesión          ██                          30ms
+                         ├─ SELECT pedidos (DB)       ██████████████████       350ms
+                         └─ armar respuesta                             ███     60ms
+                    </code></pre>
+                    <p class="fragment">Ahora sí: la lentitud estaba en la query, en el trace se ve claro.</p>
+                </section>
+
+                <section>
+                    <p>Cómo se obtienen los traces?</p>
+                    <ul>
+                        <li class="fragment">Se <strong>instrumenta</strong> la app: cada request, query a la DB, llamada HTTP saliente, etc genera un span.</li>
+                        <li class="fragment">✅ Para los frameworks y librerías populares, ya se hace casi automáticamente con plugins.</li>
+                        <li class="fragment">Los spans se envían a un sistema central que los junta y los muestra como el gráfico de recién.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/apis.png" style="width: 15%" />
+                    <h3>Tracing distribuido</h3>
+                    <p>Cuando una request pasa por muchos servicios.</p>
+                </section>
+
+                <section>
+                    <p>Con microservicios (o servicios auxiliares), una request puede pasar por muchos sistemas:</p>
+                    <p class="fragment">Web server → API → servicio de usuarios → servicio de pagos → DB...</p>
+                    <p class="fragment">Cada servicio tiene sus propios logs, en sus propios nodos. Si la request demoró mucho, quién es el culpable?</p>
+                </section>
+
+                <section>
+                    <p>La solución: un <strong>trace id</strong>.</p>
+                    <ul>
+                        <li class="fragment">El primer servicio le asigna un id único a la request.</li>
+                        <li class="fragment">Cada vez que llama a otro servicio, le pasa ese id en un <strong>header HTTP</strong> (recuerdan los headers?).</li>
+                        <li class="fragment">Cada servicio reporta sus spans con ese mismo id.</li>
+                        <li class="fragment">La herramienta junta todos los spans con el mismo id, y arma el trace completo.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Resultado: vista de toda la request, atravesando todos los servicios.</p>
+                    <pre class="fragment"><code class="hljs text" data-trim>
+                        GET /comprar               ██████████████████████     900ms
+                         ├─ backend mobile          █                           40ms
+                         ├─ servicio usuarios        ██                         70ms
+                         └─ servicio pagos             ███████████████████     760ms
+                             └─ API del banco           █████████████████      690ms
+                    </code></pre>
+                    <p class="fragment">Vemos claro que el tiempo se fue en el servicio de pagos hablando con el banco.</p>
+                </section>
+
+                <section>
+                    <p>El estándar actual: <strong>OpenTelemetry</strong> (OTel).</p>
+                    <ul>
+                        <li class="fragment">Un estándar abierto para generar traces (y también métricas y logs).</li>
+                        <li class="fragment">Librerías para todos los lenguajes populares.</li>
+                        <li class="fragment">Instrumentamos una vez, y elegimos después a dónde mandar los datos: Jaeger, Grafana Tempo, Datadog, Honeycomb...</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Dos detalles prácticos:</p>
+                    <ul>
+                        <li class="fragment">Guardar todos los traces sale caro, así que se suele guardar solo un porcentaje (<strong>sampling</strong>), o solo los lentos y los que fallaron, o poco tiempo hacia atrás.</li>
+                        <li class="fragment">✅ Si incluimos el <strong>trace id en los logs</strong>, desde un trace lento podemos ir directo a los logs exactos de esa request.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>El tracing no es solo para microservicios!</p>
+                    <p class="fragment">Incluso en un monolito nos muestra cuánto tardó cada query, cada llamada a una API externa, cada acceso a caché.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/tools.png" style="width: 20%" />
+                    <h3>Juntando todo</h3>
+                    <p>Cuándo usamos cada cosa?</p>
+                </section>
+
+                <section>
+                    <p>Tenemos un incidente a las 3am:</p>
+                    <ol>
+                        <li class="fragment">🚨 Una <strong>alerta</strong> nos avisa: 8% de errores en el pago de compras.</li>
+                        <li class="fragment">📊 El <strong>dashboard</strong> muestra que empezó justo después de un deploy, solo en el servicio de pagos.</li>
+                        <li class="fragment">🔍 Un <strong>trace</strong> de una request fallida de ejemplo muestra que la llamada a la API del banco da timeout.</li>
+                        <li class="fragment">📜 Los <strong>logs</strong> de esa request muestran el error: la config nueva tiene mal la URL del banco.</li>
+                        <li class="fragment">⏪ <strong>Rollback</strong> al deploy anterior, y a dormir.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <p>Por dónde empezamos? No hace falta todo desde el día uno:</p>
+                    <ul>
+                        <li class="fragment">Logs estructurados a stdout, recolectados por la plataforma.</li>
+                        <li class="fragment">Error tracking (ej: Sentry).</li>
+                        <li class="fragment">Un chequeo de uptime desde afuera.</li>
+                        <li class="fragment">Un dashboard con las méticas más importantes, y una o dos alertas.</li>
+                        <li class="fragment">Tracing cuando tengamos código complejo, o varios servicios, o problemas de performance difíciles de ubicar.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Resumiendo:</p>
+                    <ul>
+                        <li class="fragment">Deploys automáticos, con versiones identificables y rollback fácil.</li>
+                        <li class="fragment">Infra como código: reproducible, revisable, versionada.</li>
+                        <li class="fragment">PaaS y servicios administrados: menos trabajo de infra, a cambio de costo y control.</li>
+                        <li class="fragment">Observabilidad: logs, métricas, traces, y alertas para entender y enterarnos de lo que pasa.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Preguntas?</h2>
+                </section>
             </div>
         </div>
 
