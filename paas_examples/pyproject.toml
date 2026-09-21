@@ -5,4 +5,5 @@ description = "Ejemplo mínimo para deployar en un PaaS"
 requires-python = ">=3.10"
 dependencies = [
     "flask>=3.1.2",
+    "psycopg[binary]>=3.2",
 ]
