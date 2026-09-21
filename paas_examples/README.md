@@ -1,0 +1,41 @@
+# PaaS Demo
+
+Una web mínima para deployar en un PaaS real. Usamos [Render](https://render.com), que tiene un plan gratuito que no pide tarjeta de crédito (los servicios gratuitos se "duermen" a los 15 minutos sin recibir requests, y tardan cerca de un minuto en despertar en la siguiente).
+
+Ojo: el código de la demo **no está en la raíz del repo**, sino en la subcarpeta `paas_examples/`. Es lo normal cuando un repo tiene varias cosas adentro, y hay que avisarle al PaaS (ver abajo).
+
+La app:
+
+- Muestra un saludo que sale de la variable de entorno `GREETING`.
+- Escucha en `0.0.0.0`, en el puerto que le indica el PaaS con la variable `PORT` (en Render, 10000 por defecto).
+- Escribe logs a la salida estándar (con el módulo `logging`) en cada vista.
+- Tiene `/slow` (tarda 2 segundos) y `/error` (falla con un 500), para tener algo que mirar en logs y métricas.
+
+## Probarla localmente (opcional)
+
+Parados en esta carpeta (`paas_examples/`, la que tiene el Dockerfile):
+
+```
+docker build -t my_paas_web .
+docker run --rm -p 5000:5000 my_paas_web
+```
+
+## Deployarla en Render
+
+1. Crear una cuenta en Render (se puede entrar con GitHub).
+2. En Render: New → Web Service → conectar la cuenta de GitHub y elegir el repo si es un repo privado, o usar la opción de Public Repository si es público.
+3. Configurar:
+   - **Language**: Docker (Render detecta el Dockerfile)
+   - **Root Directory**: `paas_examples` ← sin esto, Render busca el Dockerfile en la raíz del repo y el deploy falla.
+   - **Tipo de instancia**: Free
+4. Deploy Web Service. Render construye la imagen, la corre, y en un rato nos da una URL con HTTPS.
+
+El **Root Directory** hace dos cosas: todo lo demás (el Dockerfile, el contexto del build) se busca relativo a esa carpeta, y los deploys automáticos se disparan solo si el push toca archivos de adentro.
+
+Cosas para probar una vez deployada:
+
+- **Variables de entorno**: Environment → agregar `GREETING` con otro texto → click en Save, Rebuild and Deploy.
+- **Logs**: pestaña Logs, mientras usamos la web (`/`, `/slow`, `/error`).
+- **Métricas**: pestaña Metrics: CPU, memoria, bandwith, etc (algunas no se muestran con la instancia gratuita).
+- **Deploy automático**: cambiar algo en `web.py`, hacer push a main, y mirar cómo se deploya solo. (Un push que toque solo archivos de afuera de `paas_examples/` no dispara nada.)
+- **Rollback**: pestaña Deploys → botón **Rollback** en un deploy anterior. Ojo: al hacer rollback, Render desactiva los deploys automáticos (para que el próximo push no pise la vuelta atrás); se vuelven a activar en Settings.
