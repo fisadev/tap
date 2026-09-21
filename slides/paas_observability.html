@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+
+        <title>TAP | PaaS y Observabilidad</title>
+
+        <link rel="stylesheet" href="static/reveal_js/reset.css" />
+        <link rel="stylesheet" href="static/reveal_js/reveal.css" />
+        <link rel="stylesheet" href="static/reveal_js/theme/night.css" />
+
+        <!-- Theme used for syntax highlighted code -->
+        <link rel="stylesheet" href="static/reveal_js/plugin/highlight/monokai.css" />
+        <!-- My style overrides -->
+        <link rel="stylesheet" href="static/my_styles.css" />
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h2>PaaS y Observabilidad</h2>
+                    <p>Tópicos Avanzados de Programación</p>
+                </section>
+
+                <section>
+                    <img src="static/img/deploy.png" style="width: 20%" />
+                    <p>Tenemos una app desarrollada</p>
+                    <p>Y ahora?</p>
+                </section>
+
+                <section>
+                    <p>En esta clase:</p>
+                    <ul>
+                        <li class="fragment">Cómo llevarla a producción en infra moderna.</li>
+                        <li class="fragment">Cómo monitorear y entender si está andando (o no).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/deploy.png" style="width: 20%" />
+                    <h3>Deploys</h3>
+                    <p>Llevar código a producción.</p>
+                </section>
+
+                <section>
+                    <p>La forma más básica de deployar usando containers y Docker Compose <span style="color: #fc035e">a mano</span>:</p>
+                    <div class="r-stack">
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # en nuestra máquina de desarrollo, con el nuevo código,
+                            # buildeamos una nueva imagen de docker
+                            docker build -t mi-web .
+                            # y la guardamos en un archivo
+                            docker save mi-web > mi-web-v3.tar
+                        </code></pre>
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # subimos la imagen a nuestro servidor
+                            scp mi-web-v3.tar mi-servidor:/tmp
+                            # nos conectamos por SSH al servidor y cargamos la imagen
+                            ssh mi-servidor
+                            docker load < /tmp/mi-web-v3.tar
+                        </code></pre>
+                        <pre class="fragment fade-in-then-out"><code class="hljs bash" data-trim data-line-numbers>
+                            # y recreamos/reiniciamos los containers de nuestra web, 
+                            # para que usen la nueva imagen
+                            docker-compose down
+                            docker-compose up -d
+                        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <p>Funciona! Y para un proyecto chico alcanza. Peeero...</p>
+                </section>
+
+                <section>
+                    <p class="fragment">❌ Seguro va a haber más pasos. Hay que tenerlos documentados, y no equivocarse al correrlos un viernes a las 18hs.</p>
+                    <p class="fragment">❌ N servidores o servicios → N veces más propenso a errores.</p>
+                    <p class="fragment">❌ Sin tests ni chequeos antes de deployar.</p>
+                    <p class="fragment">❌ Dependemos de una persona haciendo cosas a mano. No CD.</p>
+                    <p class="fragment">❌ Si algo sale mal, cómo volvemos atrás?</p>
+                </section>
+
+                <section>
+                    <img src="static/img/checks.png" style="width: 20%" />
+                    <p>Cuando vimos <strong>CI/CD</strong> dijimos que el deploy podía ser un paso más de un pipeline <span style="color: #b0ed2b">automatizado</span>.</p>
+                    <p class="fragment">Cómo sería ese pipeline?</p>
+                </section>
+
+                <section>
+                    <p><strong>Pipeline</strong> de deploy típico, cuando algo se mergea a main:</p>
+                    <ol>
+                        <li class="fragment">Baja el código.</li>
+                        <li class="fragment">Corre tests y chequeos.</li>
+                        <li class="fragment">Construye la imagen de Docker.</li>
+                        <li class="fragment">La sube a un <strong>registry</strong> (repo de imágenes, ej: Docker Hub, GitHub Container Registry).</li>
+                        <li class="fragment">Avisa a la infra que use la nueva imagen.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <img src="static/img/checks.png" style="width: 20%" />
+                    <p>Cómo definimos ese pipeline? Dónde se programa?</p>
+                </section>
+
+                <section>
+                    <p>Definido en un archivo en el repo, lo ejecuta un servicio de CI/CD (GitHub Actions, GitLab CI, etc). Ej:</p>
+                    <pre class="fragment"><code class="hljs yaml" data-trim data-line-numbers>
+                        on:
+                          push:
+                            branches: [main]
+                        env:
+                          IMG: registry.com/app:${{ github.sha }}
+                        jobs:
+                          deploy:
+                            runs-on: ubuntu-latest
+                            steps:
+                              - uses: actions/checkout@v4
+                              - run: uv run pytest
+                              - run: docker build -t $IMG .
+                              - run: docker push $IMG
+                              - run: ./deploy.sh $IMG
+                    </code></pre>
+                </section>
+
+                <section>
+                    <p>Qué hace el "deploy.sh"?</p>
+                    <ul>
+                        <li class="fragment">Podría por ssh decirle al servidor que haga docker compose down/up.</li>
+                        <li class="fragment">O en infra moderna: la infra tiene API a la que le podemos pegar para pedir "empezá a usar esta nueva imagen para el servicio X".</li>
+                    </ul>
+                </section>
+
+
+                <section>
+                    <p><strong>Tag de la imagen</strong> == hash del commit.</p>
+                    <ul>
+                        <li class="fragment">Cada imagen nos dice exactamente qué versión de código tiene adentro.</li>
+                        <li class="fragment">Sabemos qué versión está corriendo en dev/stag/prod.</li>
+                        <li class="fragment">✅ <strong>Rollback</strong> fácil: si la versión nueva está rota, deployamos la imagen anterior.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/switch.png" style="width: 20%" />
+                    <p>Cómo reemplazamos la versión vieja por la nueva, sin que los usuarios lo noten?</p>
+                    <p class="fragment">Con N nodos corriendo, tenemos opciones...</p>
+                </section>
+
+                <section>
+                    <p><strong>Rolling update</strong>: reemplazar nodos de a uno (o de a pocos).</p>
+                    <p class="fragment">✅ El más común, por defecto en la mayoría de los orquestadores.</p>
+                    <p class="fragment">✅ Sin downtime: siempre tenemos nodos vivos para que el load balancer use.</p>
+                    <p class="fragment">❌ Durante un rato conviven dos versiones distintas de la app.</p>
+                    <p class="fragment">(Los <strong>canary releases</strong> que vimos hace poco son una variante de esto)</p>
+                </section>
+
+                <section>
+                    <p><strong>Blue/green</strong>: levantar la versión nueva completa al lado de la vieja, y cambiar todo el tráfico de golpe.</p>
+                    <img class ="fragment" src="static/img/indiana-jones.gif" style="width: 30%" />
+                    <p class="fragment">✅ Nunca conviven versiones, volver atrás es cambiar el tráfico de vuelta.</p>
+                    <p class="fragment">❌ Requiere el doble de infra (por un rato).</p>
+                </section>
+
+                <section>
+                    <img src="static/img/storage.png" style="width: 10%" />
+                    <p>Ojo con la <strong>base de datos</strong>!</p>
+                    <ul>
+                        <li class="fragment">Es fácil revertir código. Datos? no tanto!</li>
+                        <li class="fragment">Si la versión nueva cambia el esquema de la DB, no es trivial el rolling deploy o volver a atrás un blue/green.</li>
+                        <li class="fragment">Se suele resolver haciendo varios releases chicos encadenados.</li>
+                        <li class="fragment">Algunos frameworks tienen migraciones revertibles (ej: Django).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/secure.png" style="width: 10%" />
+                    <h3>Configuración y secretos</h3>
+                </section>
+
+                <section>
+                    <p>La misma imagen Docker va a correr en dev, staging y prod.</p>
+                    <p class="fragment">...pero en cada entorno va a tener valores diferentes para cosas como config de la DB (diferentes por entorno), API keys, etc.</p>
+                    <p class="fragment">Cómo lo resolvemos?</p>
+                </section>
+
+                <section>
+                    <p>Lo que cambia entre entornos <strong>no va dentro de la imagen ni en el repo</strong>.</p>
+                    <p class="fragment">Se pasa desde afuera, normalmente con <strong>variables de entorno</strong>.</p>
+                </section>
+
+                <section>
+                    <p>Nuestro código espera poder obtener los valores desde variables de entorno:</p>
+                    <pre class="fragment"><code class="hljs bash" data-trim data-line-numbers>
+                        # ejemplo en python
+                        import os
+                        db = DataBase.connect(
+                            host=os.environ["DB_HOST"], 
+                            password=os.environ["DB_PASSWORD"],
+                        )
+                        ...
+                    </code></pre>
+                </section>
+                <section>
+                    <p>Y al correr, le pasamos los valores para las variables de entorno al contenedor:</p>
+                    <pre class="fragment"><code class="hljs bash" data-trim data-line-numbers>
+                        # una por una a mano
+                        docker run -e DB_HOST=prod.db.com -e DB_PASSWORD=1234 mi-web
+
+                        # o mejor, desde un archivo
+                        docker run --env-file .env mi-web
+                    </code></pre>
+                </section>
+
+                <section>
+                    <p>Dónde guardamos el archivo con los secretos?</p>
+                    <p class="fragment">En el repo?</p>
+                    <p class="fragment">❌ NUNCA!! Es muy peligroso!</p>
+                    <p class="fragment">En el servidor + backup en otro lado?</p>
+                    <p class="fragment">Puede ser, aunque se complica cuando son N servidores, N entornos, N servicios, etc.
+                        <br>Muchos env files → <span style="color: #fc035e">alto riesgo de hacer algo mal</span>.</p>
+                </section>
+
+                <section>
+                    <p>💡 Un <strong>gestor de secretos</strong> es todavía mejor:</p>
+                    <p class="fragment">Desde una web cargamos y editamos secretos, 
+                        y luego nos da una utilidad para setear variables de entorno con esos secretos!</p>
+                    <pre class="fragment"><code class="hljs bash" data-trim data-line-numbers>
+                        # ejemplo con doppler, con secretos guardados en un 
+                        # proyecto llamado "secretos-mi-web", usando el entorno 
+                        # "prod"
+                        doppler run -p secretos-mi-web -c prod -- python mi_web.py
+                    </code></pre>
+                </section>
+
+                <section>
+                    <p>Con un gestor de secretos:</p>
+                    <p class="fragment">✅ Nadie tiene los secretos de prod guardados en su máquina.</p>
+                    <p class="fragment">✅ Permisos por persona y entorno, historial de cambios, y rotar un secreto es cambiarlo en un solo lugar.</p>
+                    <p class="fragment" style="font-size: 0.7em">Ej: Doppler, Vault, o el propio del PaaS.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/cloud_servers.png" style="width: 25%" />
+                    <h3>IaC</h3>
+                    <p>Infraestructura como código</p>
+                </section>
+
+                <section>
+                    <p>Nuestro código ya se deploya solo. Pero de dónde salen las máquinas, las DBs, las redes, etc donde todo corre? Quién configura la <strong>infraestructura</strong>?</p>
+                    <p class="fragment">La forma "fácil": entrar a la consola web del proveedor de infra y hacer click, click, click...</p>
+                </section>
+
+                <section>
+                    <p>Infra creada a mano:</p>
+                    <p class="fragment">❌ Imposible de reproducir: cómo armamos un staging idéntico a prod?</p>
+                    <p class="fragment">❌ Nadie sabe qué está configurado y por qué. Y cuando alguien cambia algo a mano, nadie se entera.</p>
+                    <p class="fragment">❌ Sin historial, sin reviews, sin rollback.</p>
+                    <p class="fragment">❌ Si se pierde todo (un error, un ataque...), armarlo de nuevo es empezar de cero.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/code.png" style="width: 15%" />
+                    <p>💡 <strong>Infraestructura como código</strong>: describir la infra con archivos en un repo.</p>
+                    <ul>
+                        <li class="fragment">Viven en git: versionados, commits explicando motivos, etc.</li>
+                        <li class="fragment">Cambios vía PRs, con reviews.</li>
+                        <li class="fragment">Una herramienta se encarga de aplicarlos a la infra real.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Suelen ser <strong>declarativos</strong>: no decimos qué pasos hacer, sino <strong>qué esperamos que haya en la infra</strong>.</p>
+                    <pre class="fragment"><code class="hljs" data-trim data-line-numbers>
+                        resource "aws_instance" "web" {
+                          count         = 1
+                          instance_type = "t3.small"
+                          ami           = "ami-0abc123"
+                        }
+
+                        resource "aws_db_instance" "db" {
+                          engine         = "postgres"
+                          instance_class = "db.t3.medium"
+                          # (simplificado, faltan datos)
+                        }
+                    </code></pre>
+                    <p class="fragment" style="font-size: 0.7em">Ej: Terraform / OpenTofu.</p>
+                </section>
+
+                <section>
+                    <p>La herramienta compara lo que <strong>describimos</strong> con lo que <strong>existe</strong> en la infra, y calcula la diferencia.</p>
+                    <pre class="fragment"><code class="hljs" data-trim>
+                        # aplicamos los cambios
+                        > terraform apply
+
+                        Plan: 1 to add, 0 to change, 0 to destroy.
+
+                        Do you want to perform these actions?
+                          Enter a value: yes
+
+                        aws_instance.web[0]: Creating...
+                        aws_instance.web[0]: Creation complete after 23s [id=i-0f9e8d7c]
+
+                        Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+                    </code></pre>
+                    <p class="fragment">Queremos agrandar la instancia de una VM? Editamos el archivo (PR, review, etc), y luego corremos el apply.</p>
+                </section>
+
+                <section>
+                    <p class="fragment">✅ Reproducible: crear nuevos entornos (o recuperarlos) es super fácil.</p>
+                    <p class="fragment">✅ Reviews, historial y rollback, infra <strong>versionada</strong>.</p>
+                    <p class="fragment">✅ Nos queda documentación (commits) de por qué hicimos cada cambio.</p>
+                    <p class="fragment">❌ Hay que aprender la herramienta y evitar la tentación de tocar la infra a mano.</p>
+                </section>
+
+                <section>
+                    <p>Otras herramientas y variantes:</p>
+                    <ul>
+                        <li class="fragment">Pulumi: lo mismo, pero escribiendo código en Python, TypeScript, etc.</li>
+                        <li class="fragment">CloudFormation, Bicep: las propias de AWS y Azure (GCP ahora usa Terraform).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <img src="static/img/cloud_servers.png" style="width: 25%" />
+                    <h3>PaaS</h3>
+                    <p>Platform as a Service.</p>
+                </section>
+
+                <section>
+                    <p>Hasta ahora: nosotros armamos los deploys, la infra, el orquestador, los balanceadores, los certificados...</p>
+                    <p class="fragment">Es mucho trabajo! Es necesario siempre?</p>
+                    <p class="fragment">Y si otro se encarga de todo eso, y nosotros solo nos enfocamos en la app?</p>
+                </section>
+
+                <section>
+                    <p>Hay "niveles" de cuánto nos ocupamos nosotros:</p>
+                    <ul>
+                        <li class="fragment"><strong>Infra local</strong>: Hacemos todo, hasta conectar el cable de red al servidor.<br></li>
+                        <li class="fragment"><strong>IaaS</strong> (Infrastructure as a Service): nos dan máquinas virtuales, redes, discos. El resto lo hacemos nosotros.<br>
+                            <span style="font-size: 0.7em">Ej: AWS EC2, DigitalOcean, Google Compute Engine.</span></li>
+                        <li class="fragment"><strong>PaaS</strong> (Platform as a Service): nos dan una plataforma donde subimos nuestra app, y se ocupan de todo lo necesario para correrla.<br>
+                            <span style="font-size: 0.7em">Ej: Heroku, Render, Fly.io, Railway, Google Cloud Run.</span></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Cuanto más control cedemos, menos <strong>flexibilidad</strong> y más <strong>costo de infra</strong> vamos a pagar, 
+                        pero menos <strong>trabajo</strong> vamos a necesitar.</p>
+                </section>
+
+                <section>
+                    <p>Qué hace un <strong>PaaS</strong> por nosotros?</p>
+                    <ul>
+                        <li class="fragment">Construir y deployar la app cada vez que le pasamos código nuevo.</li>
+                        <li class="fragment">Correrla en contenedores, y reiniciarlos si se caen.</li>
+                        <li class="fragment">Balancear carga y escalar (a mano o automáticamente).</li>
+                        <li class="fragment">HTTPS, certificados, DNS.</li>
+                        <li class="fragment">Rollbacks, logs, métricas básicas.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>En la práctica, deployar una versión nueva en un PaaS es re simple:</p>
+                    <pre class="fragment"><code class="hljs bash" data-trim data-line-numbers>
+                        # Fly.io
+                        fly deploy
+
+                        # Heroku
+                        git push heroku main
+                    </code></pre>
+                    <p class="fragment">O ni eso: conectamos el repo y cada merge a main se deploya solo (ej: Render).</p>
+                </section>
+
+                <section>
+                    <p>Qué le tenemos que dar?</p>
+                    <ul>
+                        <li class="fragment">Nuestra app (código o imagen).</li>
+                        <li class="fragment">Cómo se corre (el comando).</li>
+                        <li class="fragment">Variables de entorno y secretos.</li>
+                        <li class="fragment">Cuántos nodos, o reglas de auto scaling.</li>
+                    </ul>
+                    <p class="fragment">Bastante parecido a lo que le describíamos a un orquestador, pero sin tener que administrarlo.</p>
+                </section>
+
+                <section>
+                    <img src="static/img/apis.png" style="width: 20%" />
+                    <h3>Servicios típicos</h3>
+                    <p>Nuestra app casi nunca es solo la app.</p>
+                </section>
+
+                <section>
+                    <p>Los PaaS y las nubes grandes (AWS, Google Cloud, Azure) ofrecen <strong>servicios administrados</strong> de todo lo que suele acompañar a una app:</p>
+                    <ul>
+                        <li class="fragment">Bases de datos (ej: Postgres, MySQL).</li>
+                        <li class="fragment">Caché y sesiones (ej: Redis).</li>
+                        <li class="fragment">Colas de tareas y mensajes.</li>
+                        <li class="fragment">Almacenamiento de archivos/blobs (ej: S3).</li>
+                        <li class="fragment">CDN, DNS, certificados.</li>
+                        <li class="fragment">Tareas programadas (cron jobs) y workers.</li>
+                        <li class="fragment">Y muchísimo más, las grandes tienen cientos de servicios...</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <p>Ej: una <strong>DB administrada</strong>.</p>
+                    <p class="fragment">✅ Backups automáticos, actualizaciones, réplicas y failover, monitoreo.</p>
+                    <p class="fragment">✅ Nos ahorra la parte más difícil de escalar y de mantener (la DB, se acuerdan?).</p>
+                    <p class="fragment">❌ Es más cara que correr nosotros lo mismo en una VM.</p>
+                    <p class="fragment">❌ Tenemos menos control sobre configuraciones avanzadas.</p>
+                </section>
+
+                <section>
+                    <p>Ojo con el Vendor lock-in:</p>
+                    <p class="fragment">Cuanto más usamos servicios propios de un proveedor, más difícil es irnos.</p>
+                    <p class="fragment">✅ Contrarrestamos: app en contenedores, servicios estándar (Postgres, Redis en vez de versiones propietarias), y la infra descripta como código.</p>
+                    <p class="fragment">Casi siempre vale la pena por la facilidad cuando somos chicos, pateando para adelante el posible problema de "cambiar/salirnos de este proveedor".</p>
+                </section>
+
+                <section>
+                    <p>Entonces, dónde conviene correr nuestra app?</p>
+                    <ul>
+                        <li class="fragment"><strong>PaaS</strong>: casi siempre buen punto de partida (salir rápido al mercado), pero caro y rígido cuando crecemos.</li>
+                        <li class="fragment"><strong>IaaS + contenedores/orquestadores</strong> (ej: Kubernetes en una nube): cuando necesitamos más control, o el costo del PaaS ya no cierra.</li>
+                        <li class="fragment"><strong>Infra propia física</strong>: casos muy específicos (regulaciones, escala enorme, hardware particular, o empresa/infra legacy).</li>
+                    </ul>
+                    <p class="fragment">Se puede empezar en uno y migrar después!</p>
+                </section>
+
+                <section>
+                    <h3>$</h3>
+                    <p>Y <strong>ojo con la factura</strong>:
+                        casi todo se cobra por uso. Configuren alertas+límites de presupuesto desde el día uno!</p>
+                </section>
+
+                <section>
+                    <img src="static/img/play.png" style="width: 20%" />
+                    <h3>Demo</h3>
+                    <p>Deployando una app en un PaaS real (Render).</p>
+                    <p><a href="https://github.com/fisadev/tap/tree/main/paas_examples">Código en el repo</a></p>
+                </section>
+
+                <section>
+                    <img src="static/img/inspect.png" style="width: 15%" />
+                    <h3>Observabilidad</h3>
+                    <p>La app está deployada. Cómo sabemos si anda bien?</p>
+                </section>
+
+                <section>
+                    <p>Producción no es nuestra máquina:</p>
+                    <p class="fragment">❌ No podemos poner breakpoints ni imprimir cosas y mirar la terminal.</p>
+                    <p class="fragment">❌ Hay muchos nodos, efímeros, que aparecen y desaparecen.</p>
+                    <p class="fragment">❌ Los problemas dependen de datos y tráfico reales, difíciles de reproducir localmente.</p>
+                    <p class="fragment">Si no miramos nosotros, nos enteramos por los usuarios: "no me anda la app" 😱.</p>
+                </section>
+
+            </div>
+        </div>
+
+        <script src="static/reveal_js/reveal.js"></script>
+        <script src="static/reveal_js/plugin/notes.js"></script>
+        <script src="static/reveal_js/plugin/markdown.js"></script>
+        <script src="static/reveal_js/plugin/highlight.js"></script>
+        <script src="static/init_slides.js"></script>
+    </body>
+</html>
